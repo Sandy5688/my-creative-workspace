@@ -1,148 +1,100 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Sparkles, Zap, Palette, Code, Rocket, Star } from 'lucide-react';
+import { Sparkles, Zap, Palette, Rocket } from 'lucide-react';
 
 export default function LandingHero() {
-  const features = [
-    { icon: Sparkles, text: 'AI-Powered Generation', color: 'from-blue-500 to-cyan-500' },
-    { icon: Zap, text: 'Lightning Fast', color: 'from-yellow-500 to-orange-500' },
-    { icon: Palette, text: 'Beautiful Design', color: 'from-pink-500 to-rose-500' },
-    { icon: Code, text: 'Developer Friendly', color: 'from-purple-500 to-indigo-500' },
-  ];
-
   return (
-    <div className="flex items-center justify-center min-h-full bg-gradient-to-br from-blue-50 via-white to-purple-50 p-8">
-      <div className="max-w-4xl w-full text-center space-y-8">
-        {/* Animated Logo */}
+    <div className="relative flex items-center justify-center h-full overflow-hidden bg-gradient-to-br from-violet-600 via-purple-600 to-pink-500">
+      {/* Animated Background Orbs */}
+      <div className="absolute inset-0">
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+            x: [0, 100, 0],
+            y: [0, -50, 0],
+          }}
+          transition={{ duration: 20, repeat: Infinity }}
+          className="absolute top-20 left-20 w-72 h-72 bg-yellow-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
+        />
+        <motion.div
+          animate={{
+            scale: [1, 1.3, 1],
+            x: [0, -100, 0],
+            y: [0, 100, 0],
+          }}
+          transition={{ duration: 15, repeat: Infinity }}
+          className="absolute top-40 right-20 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
+        />
+        <motion.div
+          animate={{
+            scale: [1, 1.1, 1],
+            x: [0, 50, 0],
+            y: [0, -100, 0],
+          }}
+          transition={{ duration: 25, repeat: Infinity }}
+          className="absolute bottom-20 left-1/2 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
+        />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 max-w-2xl w-full text-center space-y-6 p-6">
         <motion.div
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
-          transition={{ type: 'spring', duration: 1, bounce: 0.5 }}
-          className="inline-block"
+          transition={{ duration: 0.8, type: 'spring', bounce: 0.5 }}
+          className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-3xl shadow-2xl mx-auto"
         >
-          <div className="relative">
-            <motion.div
-              animate={{
-                boxShadow: [
-                  '0 0 20px rgba(14, 165, 233, 0.3)',
-                  '0 0 60px rgba(14, 165, 233, 0.5)',
-                  '0 0 20px rgba(14, 165, 233, 0.3)',
-                ],
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-24 h-24 bg-gradient-to-br from-blue-500 via-cyan-500 to-purple-500 rounded-3xl flex items-center justify-center"
-            >
-              <Sparkles className="w-12 h-12 text-white" />
-            </motion.div>
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-              className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center"
-            >
-              <Star className="w-5 h-5 text-white" fill="currentColor" />
-            </motion.div>
-          </div>
+          <Sparkles className="w-10 h-10 text-violet-600" />
         </motion.div>
 
-        {/* Main Heading */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="space-y-4"
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
         >
-          <h1 className="text-5xl md:text-7xl font-bold">
-            <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Create Amazing
-            </span>
+          <h1 className="text-4xl md:text-5xl font-black text-white leading-tight drop-shadow-lg mb-4">
+            Create Stunning Content
             <br />
-            <span className="text-gray-800">Content in Seconds</span>
+            <span className="text-yellow-300">In Seconds</span>
           </h1>
-          <p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto">
-            Powered by advanced AI, designed for creators. 
-            <br className="hidden md:block" />
-            Your ideas deserve the perfect presentation.
+          <p className="text-lg text-white/90 max-w-lg mx-auto drop-shadow">
+            AI-powered workspace that transforms your ideas into professional designs
           </p>
         </motion.div>
 
-        {/* Feature Pills */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="flex flex-wrap justify-center gap-4"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="flex flex-wrap justify-center gap-3"
         >
-          {features.map((feature, index) => (
+          {[
+            { icon: Zap, label: 'Fast', color: 'from-yellow-400 to-orange-500' },
+            { icon: Palette, label: 'Beautiful', color: 'from-pink-400 to-purple-500' },
+            { icon: Rocket, label: 'Powerful', color: 'from-blue-400 to-cyan-500' },
+          ].map((item, i) => (
             <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 + index * 0.1 }}
-              whileHover={{ scale: 1.05, y: -2 }}
-              className={`flex items-center gap-2 px-6 py-3 bg-gradient-to-r ${feature.color} rounded-full text-white font-medium shadow-lg`}
+              key={i}
+              whileHover={{ scale: 1.05 }}
+              className={`bg-gradient-to-br ${item.color} text-white px-5 py-2.5 rounded-full font-semibold text-sm shadow-lg flex items-center gap-2 cursor-pointer`}
             >
-              <feature.icon className="w-5 h-5" />
-              <span>{feature.text}</span>
+              <item.icon className="w-4 h-4" />
+              {item.label}
             </motion.div>
           ))}
         </motion.div>
 
-        {/* Prompt Examples */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="space-y-3"
+          transition={{ delay: 0.7 }}
+          className="pt-4"
         >
-          <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
-            Try These Prompts →
+          <p className="text-white/80 text-sm">
+            ← Enter a prompt to get started
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            {[
-              'Create a landing page for a coffee shop',
-              'Build a tech startup website',
-              'Design a fitness app landing',
-              'Make a restaurant showcase',
-            ].map((example, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.9 + index * 0.1 }}
-                whileHover={{ scale: 1.05 }}
-                className="px-4 py-2 bg-white border-2 border-gray-200 rounded-lg text-sm text-gray-700 hover:border-blue-400 hover:shadow-md transition-all cursor-pointer"
-              >
-                "{example}"
-              </motion.div>
-            ))}
-          </div>
         </motion.div>
-
-        {/* Animated Arrow */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, y: [0, 10, 0] }}
-          transition={{ delay: 1.2, y: { duration: 1.5, repeat: Infinity } }}
-          className="pt-8"
-        >
-          <div className="inline-flex items-center gap-2 text-gray-400">
-            <Rocket className="w-5 h-5" />
-            <span className="text-sm font-medium">Enter a prompt to get started</span>
-          </div>
-        </motion.div>
-
-        {/* Floating Elements */}
-        <motion.div
-          animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
-          transition={{ duration: 4, repeat: Infinity }}
-          className="absolute top-20 right-20 w-16 h-16 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full opacity-20 blur-xl"
-        />
-        <motion.div
-          animate={{ y: [0, 20, 0], rotate: [0, -5, 0] }}
-          transition={{ duration: 5, repeat: Infinity }}
-          className="absolute bottom-20 left-20 w-24 h-24 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full opacity-20 blur-xl"
-        />
       </div>
     </div>
   );
