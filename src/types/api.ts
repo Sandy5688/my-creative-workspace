@@ -14,6 +14,7 @@ export interface Draft {
   createdAt?: string;
   userId?: string;
   publishedUrl?: string;
+  [key: string]: any;
 }
 
 export interface CreatePayload {
@@ -28,6 +29,8 @@ export interface CreateResponse {
   success: boolean;
   draftId: string;
   previewData: Draft;
+  message?: string;
+  [key: string]: any;
 }
 
 export interface UpdatePayload {
@@ -38,6 +41,7 @@ export interface UpdatePayload {
 export interface UpdateResponse {
   success: boolean;
   message: string;
+  [key: string]: any;
 }
 
 export interface PublishPayload {
@@ -47,6 +51,7 @@ export interface PublishPayload {
 export interface PublishResponse {
   success: boolean;
   url: string;
+  [key: string]: any;
 }
 
 export interface PaymentPayload {
@@ -59,4 +64,5 @@ export interface PaymentResponse {
   success: boolean;
   transactionId: string;
   unlockedFeatures: string[];
+  [key: string]: any;
 }
