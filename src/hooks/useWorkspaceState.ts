@@ -2,9 +2,8 @@
 
 import { useState } from 'react';
 import { Block, Draft } from '@/types/api';
-import { generateId } from '@/lib/utils';
 
-interface WorkspaceStore {
+export interface WorkspaceStore {
   currentDraft: Draft | null;
   isLoading: boolean;
   isSaving: boolean;
@@ -42,11 +41,9 @@ export function useWorkspaceState(): WorkspaceStore {
 
   const updateBlock = (blockId: string, content: string) => {
     if (!currentDraft) return;
-
     const updatedBlocks = currentDraft.blocks.map((block) =>
       block.id === blockId ? { ...block, content } : block
     );
-
     setCurrentDraft({
       ...currentDraft,
       blocks: updatedBlocks,
@@ -56,9 +53,7 @@ export function useWorkspaceState(): WorkspaceStore {
 
   const deleteBlock = (blockId: string) => {
     if (!currentDraft) return;
-
     const updatedBlocks = currentDraft.blocks.filter((block) => block.id !== blockId);
-
     setCurrentDraft({
       ...currentDraft,
       blocks: updatedBlocks,
@@ -68,7 +63,6 @@ export function useWorkspaceState(): WorkspaceStore {
 
   const addBlock = (block: Block) => {
     if (!currentDraft) return;
-
     setCurrentDraft({
       ...currentDraft,
       blocks: [...currentDraft.blocks, block],

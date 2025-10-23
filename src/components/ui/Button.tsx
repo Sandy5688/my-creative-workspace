@@ -1,72 +1,59 @@
 'use client';
 
-import { ButtonHTMLAttributes, forwardRef } from 'react';
-import { cn } from '@/lib/utils';
-import { Loader2, Lock } from 'lucide-react';
+import { forwardRef, ButtonHTMLAttributes, ReactNode } from 'react';
 import { motion } from 'framer-motion';
+import { Loader2 } from 'lucide-react';
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'outline' | 'payment' | 'danger';
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'payment';
   size?: 'sm' | 'md' | 'lg';
-  isLoading?: boolean;
-  isLocked?: boolean;
   fullWidth?: boolean;
+  isLoading?: boolean;
+  children: ReactNode;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
-      className,
       variant = 'primary',
       size = 'md',
-      isLoading,
-      isLocked,
-      fullWidth,
-      children,
+      fullWidth = false,
+      isLoading = false,
       disabled,
+      className = '',
+      children,
       ...props
     },
     ref
   ) => {
-    const baseStyles = `
-      inline-flex items-center justify-center gap-2 rounded-xl font-medium 
-      transition-all duration-200 focus:outline-none focus:ring-2 
-      focus:ring-primary/50 focus:ring-offset-2 disabled:opacity-50 
-      disabled:cursor-not-allowed active:scale-95
-    `;
-
+    const baseStyles = 'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-offset-2';
+    
     const variants = {
-      primary: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-lg',
-      secondary: 'bg-muted text-foreground hover:bg-muted/80',
-      ghost: 'hover:bg-muted hover:text-foreground',
-      outline: 'border-2 border-border hover:bg-muted',
-      payment: 'bg-gradient-to-r from-primary via-blue-500 to-blue-600 text-white shadow-lg hover:shadow-xl',
-      danger: 'bg-red-500 text-white hover:bg-red-600 shadow-md',
+      primary: 'bg-violet-600 text-white hover:bg-violet-700 focus:ring-violet-500 disabled:bg-slate-300',
+      secondary: 'bg-slate-200 text-slate-900 hover:bg-slate-300 focus:ring-slate-500 disabled:bg-slate-100',
+      outline: 'border-2 border-slate-300 text-slate-700 hover:bg-slate-50 focus:ring-slate-500 disabled:border-slate-200',
+      ghost: 'text-slate-700 hover:bg-slate-100 focus:ring-slate-500',
+      payment: 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 focus:ring-green-500 shadow-lg',
     };
 
     const sizes = {
-      sm: 'h-9 px-4 text-sm',
-      md: 'h-11 px-6 text-base',
-      lg: 'h-13 px-8 text-lg',
+      sm: 'px-3 py-1.5 text-sm',
+      md: 'px-4 py-2 text-sm',
+      lg: 'px-6 py-3 text-base',
     };
+
+    const widthStyle = fullWidth ? 'w-full' : '';
 
     return (
       <motion.button
         ref={ref}
         whileHover={{ scale: disabled || isLoading ? 1 : 1.02 }}
         whileTap={{ scale: disabled || isLoading ? 1 : 0.98 }}
-        className={cn(
-          baseStyles,
-          variants[variant],
-          sizes[size],
-          fullWidth && 'w-full',
-          className
-        )}
-        disabled={disabled || isLoading || isLocked}
-        {...props}
+        className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${widthStyle} ${className} disabled:cursor-not-allowed disabled:opacity-50`}
+        disabled={disabled || isLoading}
+        {...(props as any)}
       >
-        {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-        {isLocked && <Lock className="h-4 w-4" />}
+        {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
         {children}
       </motion.button>
     );
