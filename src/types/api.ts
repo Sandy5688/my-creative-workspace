@@ -8,6 +8,10 @@ export interface Block {
     textAlign?: string;
     color?: string;
     spacing?: string;
+    margin?: string;
+    padding?: string;
+    lineHeight?: string;
+    [key: string]: string | undefined;
   };
 }
 
