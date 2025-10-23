@@ -1,65 +1,157 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import Panel from '@/components/ui/Panel';
+import Canvas from '@/components/ui/Canvas';
+import Button from '@/components/ui/Button';
+import Textarea from '@/components/ui/Textarea';
+import EditableBlock from '@/components/workspace/EditableBlock';
+import Loader from '@/components/ui/Loader';
+import { useCreate } from '@/hooks/useCreate';
+import { useUpdate } from '@/hooks/useUpdate';
+import { usePublish } from '@/hooks/usePublish';
+import { usePayment } from '@/hooks/usePayment';
+import { useWorkspaceState } from '@/hooks/useWorkspaceState';
+import { useLocalWorkspace } from '@/hooks/useLocalWorkspace';
+import { Mic, Sparkles, Lock, Check } from 'lucide-react';
+import { formatDate, generateId } from '@/lib/utils';
+import { Block } from '@/types/api';
 
 export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+  const [prompt, setPrompt] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [publishUrl, setPublishUrl] = useState<string | null>(null);
+  const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
+
+  const { create } = useCreate();
+  const { update } = useUpdate();
+  const { publish, isLoading: isPublishing } = usePublish();
+  const { processPayment, isLoading: isProcessingPayment } = usePayment();
+
+  const {
+    currentDraft,
+    isLoading,
+    isSaving,
+    unlockedFeatures,
+    setDraft,
+    setLoading,
+    setSaving,
+    unlockFeatures,
+    updateBlock,
+    deleteBlock,
+    addBlock,
+  } = useWorkspaceState();
+
+  const { value: savedDraft, setValue: saveDraftLocally } = useLocalWorkspace(
+    'workspace-draft',
+    null
   );
-}
+
+  useEffect(() => {
+    if (savedDraft && !currentDraft) {
+      setDraft(savedDraft);
+    }
+  }, [savedDraft, currentDraft, setDraft]);
+
+  useEffect(() => {
+    if (currentDraft) {
+      const timer = setTimeout(() => {
+        saveDraftLocally(currentDraft);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [currentDraft, saveDraftLocally]);
+
+  const handleGenerate = async () => {
+    if (!prompt.trim()) return;
+
+    setIsGenerating(true);
+    setLoading(true);
+
+    try {
+      const response = await create({
+        prompt,
+        settings: { tone: 'professional', length: 'medium' },
+      });
+
+      setDraft(response.previewData);
+      setPrompt('');
+    } catch (error) {
+      console.error('Generation failed:', error);
+    } finally {
+      setIsGenerating(false);
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!currentDraft) return;
+
+    setSaving(true);
+    try {
+      await update({
+        draftId: currentDraft.id,
+        content: currentDraft,
+      });
+      saveDraftLocally(currentDraft);
+    } catch (error) {
+      console.error('Save failed:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handlePublish = async () => {
+    if (!currentDraft) return;
+
+    try {
+      const response = await publish({
+        draftId: currentDraft.id,
+      });
+      setPublishUrl(response.url);
+      setTimeout(() => setPublishUrl(null), 5000);
+    } catch (error) {
+      console.error('Publish failed:', error);
+    }
+  };
+
+  const handlePayment = async () => {
+    try {
+      const response = await processPayment({
+        amount: 9.99,
+        userId: 'user_demo',
+        plan: 'pro',
+      });
+      unlockFeatures(response.unlockedFeatures);
+      setShowPaymentSuccess(true);
+      setTimeout(() => setShowPaymentSuccess(false), 3000);
+    } catch (error) {
+      console.error('Payment failed:', error);
+    }
+  };
+
+  const handleBlockUpdate = (blockId: string, content: string) => {
+    updateBlock(blockId, content);
+  };
+
+  const handleBlockDelete = (blockId: string) => {
+    deleteBlock(blockId);
+  };
+
+  const handleAddBlock = (type: Block['type']) => {
+    const newBlock: Block = {
+      id: generateId(),
+      type,
+      content: type === 'text' ? 'New text block...' : '',
+    };
+    addBlock(newBlock);
+  };
+
+  return (
+    <div className="flex flex-col h-screen">
+      <Header
+        onSave={handleSave}
+        onPublish={handlePublish}
