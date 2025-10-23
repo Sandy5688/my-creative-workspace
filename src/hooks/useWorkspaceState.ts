@@ -1,74 +1,92 @@
 'use client';
 
-import { create } from 'zustand';
-import { Draft, WorkspaceState } from '@/types/api';
+import { useState } from 'react';
+import { Block, Draft } from '@/types/api';
+import { generateId } from '@/lib/utils';
 
-interface WorkspaceStore extends WorkspaceState {
-  setDraft: (draft: Draft | null) => void;
+interface WorkspaceStore {
+  currentDraft: Draft | null;
+  isLoading: boolean;
+  isSaving: boolean;
+  unlockedFeatures: string[];
+  setDraft: (draft: Draft) => void;
   setLoading: (loading: boolean) => void;
   setSaving: (saving: boolean) => void;
-  setError: (error: string | null) => void;
   unlockFeatures: (features: string[]) => void;
   updateBlock: (blockId: string, content: string) => void;
   deleteBlock: (blockId: string) => void;
-  addBlock: (block: any) => void;
+  addBlock: (block: Block) => void;
 }
 
-export const useWorkspaceState = create<WorkspaceStore>((set) => ({
-  currentDraft: null,
-  isLoading: false,
-  isSaving: false,
-  error: null,
-  unlockedFeatures: [],
+export function useWorkspaceState(): WorkspaceStore {
+  const [currentDraft, setCurrentDraft] = useState<Draft | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [unlockedFeatures, setUnlockedFeatures] = useState<string[]>([]);
 
-  setDraft: (draft) => set({ currentDraft: draft }),
-  
-  setLoading: (loading) => set({ isLoading: loading }),
-  
-  setSaving: (saving) => set({ isSaving: saving }),
-  
-  setError: (error) => set({ error }),
-  
-  unlockFeatures: (features) =>
-    set((state) => ({
-      unlockedFeatures: [...new Set([...state.unlockedFeatures, ...features])],
-    })),
+  const setDraft = (draft: Draft) => {
+    setCurrentDraft(draft);
+  };
 
-  updateBlock: (blockId, content) =>
-    set((state) => {
-      if (!state.currentDraft) return state;
-      return {
-        currentDraft: {
-          ...state.currentDraft,
-          blocks: state.currentDraft.blocks.map((block) =>
-            block.id === blockId ? { ...block, content } : block
-          ),
-          lastEdited: new Date().toISOString(),
-        },
-      };
-    }),
+  const setLoading = (loading: boolean) => {
+    setIsLoading(loading);
+  };
 
-  deleteBlock: (blockId) =>
-    set((state) => {
-      if (!state.currentDraft) return state;
-      return {
-        currentDraft: {
-          ...state.currentDraft,
-          blocks: state.currentDraft.blocks.filter((block) => block.id !== blockId),
-          lastEdited: new Date().toISOString(),
-        },
-      };
-    }),
+  const setSaving = (saving: boolean) => {
+    setIsSaving(saving);
+  };
 
-  addBlock: (block) =>
-    set((state) => {
-      if (!state.currentDraft) return state;
-      return {
-        currentDraft: {
-          ...state.currentDraft,
-          blocks: [...state.currentDraft.blocks, block],
-          lastEdited: new Date().toISOString(),
-        },
-      };
-    }),
-}));
+  const unlockFeatures = (features: string[]) => {
+    setUnlockedFeatures(features);
+  };
+
+  const updateBlock = (blockId: string, content: string) => {
+    if (!currentDraft) return;
+
+    const updatedBlocks = currentDraft.blocks.map((block) =>
+      block.id === blockId ? { ...block, content } : block
+    );
+
+    setCurrentDraft({
+      ...currentDraft,
+      blocks: updatedBlocks,
+      lastEdited: new Date().toISOString(),
+    });
+  };
+
+  const deleteBlock = (blockId: string) => {
+    if (!currentDraft) return;
+
+    const updatedBlocks = currentDraft.blocks.filter((block) => block.id !== blockId);
+
+    setCurrentDraft({
+      ...currentDraft,
+      blocks: updatedBlocks,
+      lastEdited: new Date().toISOString(),
+    });
+  };
+
+  const addBlock = (block: Block) => {
+    if (!currentDraft) return;
+
+    setCurrentDraft({
+      ...currentDraft,
+      blocks: [...currentDraft.blocks, block],
+      lastEdited: new Date().toISOString(),
+    });
+  };
+
+  return {
+    currentDraft,
+    isLoading,
+    isSaving,
+    unlockedFeatures,
+    setDraft,
+    setLoading,
+    setSaving,
+    unlockFeatures,
+    updateBlock,
+    deleteBlock,
+    addBlock,
+  };
+}
