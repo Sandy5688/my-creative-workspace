@@ -1,99 +1,57 @@
-/**
- * API Type Definitions
- */
-
-export type Draft = {
+export interface Draft {
   id: string;
   title: string;
-  blocks: Block[];
   lastEdited: string;
-  status: 'draft' | 'published';
-  createdAt: string;
-};
+  blocks: Block[];
+}
 
-export type Block = {
+export interface Block {
   id: string;
-  type: 'text' | 'image' | 'media' | 'heading' | 'code';
+  type: 'text' | 'heading' | 'image' | 'code';
   content: string;
-  style?: BlockStyle;
-  metadata?: Record<string, any>;
-};
+}
 
-export type BlockStyle = {
-  fontSize?: string;
-  fontWeight?: string;
-  color?: string;
-  backgroundColor?: string;
-  padding?: string;
-  margin?: string;
-  textAlign?: 'left' | 'center' | 'right';
-  borderRadius?: string;
-};
-
-export type CreatePayload = {
+export interface CreateRequest {
   prompt: string;
-  settings?: {
-    tone?: 'professional' | 'casual' | 'creative';
-    length?: 'short' | 'medium' | 'long';
-    style?: string;
+  settings: {
+    tone: string;
+    length: string;
   };
-};
+}
 
-export type CreateResponse = {
+export interface CreateResponse {
   success: boolean;
   draftId: string;
   previewData: Draft;
-  message?: string;
-};
+}
 
-export type UpdatePayload = {
+export interface UpdateRequest {
   draftId: string;
-  content: Partial<Draft>;
-  blocks?: Block[];
-};
+  content: Draft;
+}
 
-export type UpdateResponse = {
+export interface UpdateResponse {
   success: boolean;
-  draft?: Draft;
-  message?: string;
-};
+  message: string;
+}
 
-export type PublishPayload = {
+export interface PublishRequest {
   draftId: string;
-  settings?: {
-    subdomain?: string;
-    customDomain?: string;
-  };
-};
+}
 
-export type PublishResponse = {
+export interface PublishResponse {
   success: boolean;
   url: string;
-  publishedAt: string;
-  message?: string;
-};
+}
 
-export type PaymentPayload = {
+export interface PaymentRequest {
   amount: number;
   userId: string;
-  plan?: 'basic' | 'pro' | 'enterprise';
-};
+  plan: string;
+}
 
-export type PaymentResponse = {
+export interface PaymentResponse {
   success: boolean;
   transactionId: string;
   unlockedFeatures: string[];
-  expiresAt?: string;
-};
-
-export type WorkspaceState = {
-  currentDraft: Draft | null;
-  isLoading: boolean;
-  isSaving: boolean;
-  error: string | null;
-  unlockedFeatures: string[];
-};
-
-export type EditorMode = 'edit' | 'preview' | 'split';
-
-export type Theme = 'light' | 'dark' | 'system';
+}

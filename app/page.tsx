@@ -21,7 +21,7 @@ import { useLocalWorkspace } from '@/hooks/useLocalWorkspace';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
 import { Mic, MicOff, Sparkles, Lock, Check, Type, Image as ImageIcon, Code2, Play } from 'lucide-react';
 import { formatDate, generateId } from '@/lib/utils';
-import { Block } from '@/types/api';
+import { Block, Draft } from '@/types/api';
 
 export default function Home() {
   const [prompt, setPrompt] = useState('');
@@ -50,10 +50,10 @@ export default function Home() {
     addBlock,
   } = useWorkspaceState();
 
-  const { value: savedDraft, setValue: saveDraftLocally } = useLocalWorkspace(
-    'workspace-draft',
-    null
-  );
+  const { value: savedDraft, setValue: saveDraftLocally } = useLocalWorkspace<Draft>(
+  'workspace-draft',
+  null
+);
 
   useEffect(() => {
     if (savedDraft && !currentDraft) {

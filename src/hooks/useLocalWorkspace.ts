@@ -1,41 +1,92 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { safeLocalStorage } from '@/lib/utils';
+import { useState } from 'react';
+import { Block, Draft } from '@/types/api';
+import { generateId } from '@/lib/utils';
 
-export function useLocalWorkspace<T>(key: string, defaultValue: T) {
-  const [value, setValue] = useState<T>(defaultValue);
-  const [isLoading, setIsLoading] = useState(true);
+interface WorkspaceStore {
+  currentDraft: Draft | null;
+  isLoading: boolean;
+  isSaving: boolean;
+  unlockedFeatures: string[];
+  setDraft: (draft: Draft) => void;
+  setLoading: (loading: boolean) => void;
+  setSaving: (saving: boolean) => void;
+  unlockFeatures: (features: string[]) => void;
+  updateBlock: (blockId: string, content: string) => void;
+  deleteBlock: (blockId: string) => void;
+  addBlock: (block: Block) => void;
+}
 
-  // Load from localStorage on mount
-  useEffect(() => {
-    try {
-      const stored = safeLocalStorage().getItem(key);
-      if (stored) {
-        setValue(JSON.parse(stored));
-      }
-    } catch (error) {
-      console.warn('Failed to load from localStorage:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [key]);
+export function useWorkspaceState(): WorkspaceStore {
+  const [currentDraft, setCurrentDraft] = useState<Draft | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [unlockedFeatures, setUnlockedFeatures] = useState<string[]>([]);
 
-  // Save to localStorage whenever value changes
-  useEffect(() => {
-    if (!isLoading) {
-      try {
-        safeLocalStorage().setItem(key, JSON.stringify(value));
-      } catch (error) {
-        console.warn('Failed to save to localStorage:', error);
-      }
-    }
-  }, [key, value, isLoading]);
-
-  const clearStorage = () => {
-    safeLocalStorage().removeItem(key);
-    setValue(defaultValue);
+  const setDraft = (draft: Draft) => {
+    setCurrentDraft(draft);
   };
 
-  return { value, setValue, isLoading, clearStorage };
+  const setLoading = (loading: boolean) => {
+    setIsLoading(loading);
+  };
+
+  const setSaving = (saving: boolean) => {
+    setIsSaving(saving);
+  };
+
+  const unlockFeatures = (features: string[]) => {
+    setUnlockedFeatures(features);
+  };
+
+  const updateBlock = (blockId: string, content: string) => {
+    if (!currentDraft) return;
+
+    const updatedBlocks = currentDraft.blocks.map((block) =>
+      block.id === blockId ? { ...block, content } : block
+    );
+
+    setCurrentDraft({
+      ...currentDraft,
+      blocks: updatedBlocks,
+      lastEdited: new Date().toISOString(),
+    });
+  };
+
+  const deleteBlock = (blockId: string) => {
+    if (!currentDraft) return;
+
+    const updatedBlocks = currentDraft.blocks.filter((block) => block.id !== blockId);
+
+    setCurrentDraft({
+      ...currentDraft,
+      blocks: updatedBlocks,
+      lastEdited: new Date().toISOString(),
+    });
+  };
+
+  const addBlock = (block: Block) => {
+    if (!currentDraft) return;
+
+    setCurrentDraft({
+      ...currentDraft,
+      blocks: [...currentDraft.blocks, block],
+      lastEdited: new Date().toISOString(),
+    });
+  };
+
+  return {
+    currentDraft,
+    isLoading,
+    isSaving,
+    unlockedFeatures,
+    setDraft,
+    setLoading,
+    setSaving,
+    unlockFeatures,
+    updateBlock,
+    deleteBlock,
+    addBlock,
+  };
 }
