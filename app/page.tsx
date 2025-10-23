@@ -10,6 +10,7 @@ import Button from '@/components/ui/Button';
 import Textarea from '@/components/ui/Textarea';
 import EditableBlock from '@/components/workspace/EditableBlock';
 import Loader from '@/components/ui/Loader';
+import LandingHero from '@/components/ui/LandingHero';
 import { useCreate } from '@/hooks/useCreate';
 import { useUpdate } from '@/hooks/useUpdate';
 import { usePublish } from '@/hooks/usePublish';
@@ -158,15 +159,16 @@ export default function Home() {
         isSaving={isSaving}
       />
 
-      <div className="flex-1 flex overflow-hidden">
-        <div className="w-80 border-r border-border">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+        {/* Left Panel */}
+        <div className="w-full lg:w-80 border-r lg:border-b-0 border-b border-border overflow-y-auto">
           <Panel title="Create with AI">
             <div className="space-y-4">
               <Textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Describe what you want to create... Try: 'Create a landing page for a coffee shop'"
-                rows={6}
+                placeholder="Describe what you want to create...&#10;&#10;Try:&#10;• 'Create a landing page for a coffee shop'&#10;• 'Build a tech startup website'&#10;• 'Design a fitness app landing'"
+                rows={8}
                 className="resize-none"
               />
 
@@ -236,7 +238,8 @@ export default function Home() {
           </Panel>
         </div>
 
-        <div className="flex-1">
+        {/* Center Canvas */}
+        <div className="flex-1 overflow-hidden">
           <Canvas isLoading={isLoading}>
             {currentDraft ? (
               <AnimatePresence mode="popLayout">
@@ -250,20 +253,13 @@ export default function Home() {
                 ))}
               </AnimatePresence>
             ) : (
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center max-w-md">
-                  <Sparkles className="w-16 h-16 mx-auto text-primary mb-4" />
-                  <h2 className="text-2xl font-bold mb-2">Start Creating</h2>
-                  <p className="text-muted-foreground">
-                    Enter a prompt on the left to generate your first project
-                  </p>
-                </div>
-              </div>
+              <LandingHero />
             )}
           </Canvas>
         </div>
 
-        <div className="w-80 border-l border-border">
+        {/* Right Panel */}
+        <div className="w-full lg:w-80 border-l lg:border-t-0 border-t border-border overflow-y-auto">
           <Panel title="Premium Actions">
             <div className="space-y-3">
               <Button
@@ -318,6 +314,17 @@ export default function Home() {
                   Unlock All Features - $9.99
                 </Button>
               </div>
+
+              {unlockedFeatures.length > 0 && (
+                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-sm font-medium text-green-800">
+                    ✨ Premium Active
+                  </p>
+                  <p className="text-xs text-green-600 mt-1">
+                    All features unlocked
+                  </p>
+                </div>
+              )}
             </div>
           </Panel>
         </div>
@@ -325,16 +332,22 @@ export default function Home() {
 
       <Footer isSaved={!isSaving} lastSaved={currentDraft?.lastEdited} />
 
+      {/* Success Notifications */}
       <AnimatePresence>
         {publishUrl && (
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className="fixed bottom-20 right-6 p-4 bg-green-500 text-white rounded-xl shadow-lg z-50"
+            className="fixed bottom-20 right-6 p-4 bg-green-500 text-white rounded-xl shadow-lg z-50 max-w-sm"
           >
-            <p className="font-medium">Published successfully!</p>
-            <a href={publishUrl} target="_blank" rel="noopener noreferrer" className="text-sm underline">
+            <p className="font-medium">🎉 Published successfully!</p>
+            <a 
+              href={publishUrl} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-sm underline break-all hover:text-green-100"
+            >
               {publishUrl}
             </a>
           </motion.div>
@@ -347,12 +360,13 @@ export default function Home() {
             exit={{ opacity: 0, y: 50 }}
             className="fixed bottom-20 right-6 p-4 bg-green-500 text-white rounded-xl shadow-lg z-50"
           >
-            <p className="font-medium">Payment successful!</p>
+            <p className="font-medium">💳 Payment successful!</p>
             <p className="text-sm">All features unlocked 🎉</p>
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* Full Screen Loader */}
       {isPublishing && <Loader fullScreen text="Publishing your project..." />}
     </div>
   );
