@@ -2,6 +2,13 @@ export interface Block {
   id: string;
   type: 'text' | 'heading' | 'image' | 'code';
   content: string;
+  style?: {
+    fontSize?: string;
+    fontWeight?: string;
+    textAlign?: string;
+    color?: string;
+    spacing?: string;
+  };
 }
 
 export interface Draft {
