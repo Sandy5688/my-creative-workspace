@@ -155,3 +155,205 @@ export default function Home() {
       <Header
         onSave={handleSave}
         onPublish={handlePublish}
+        isSaving={isSaving}
+      />
+
+      <div className="flex-1 flex overflow-hidden">
+        <div className="w-80 border-r border-border">
+          <Panel title="Create with AI">
+            <div className="space-y-4">
+              <Textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="Describe what you want to create... Try: 'Create a landing page for a coffee shop'"
+                rows={6}
+                className="resize-none"
+              />
+
+              <div className="flex gap-2">
+                <Button
+                  fullWidth
+                  onClick={handleGenerate}
+                  isLoading={isGenerating}
+                  disabled={!prompt.trim()}
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Generate
+                </Button>
+                <Button variant="ghost" size="md">
+                  <Mic className="w-4 h-4" />
+                </Button>
+              </div>
+
+              {currentDraft && (
+                <div className="mt-6 pt-6 border-t border-border">
+                  <h3 className="text-sm font-semibold mb-3">Current Draft</h3>
+                  <div className="p-3 bg-muted rounded-lg">
+                    <p className="text-sm font-medium">{currentDraft.title}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {formatDate(currentDraft.lastEdited)}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {currentDraft && (
+                <div className="mt-6 pt-6 border-t border-border">
+                  <h3 className="text-sm font-semibold mb-3">Add Content</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleAddBlock('text')}
+                    >
+                      Text
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleAddBlock('heading')}
+                    >
+                      Heading
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleAddBlock('image')}
+                    >
+                      Image
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleAddBlock('code')}
+                    >
+                      Code
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </Panel>
+        </div>
+
+        <div className="flex-1">
+          <Canvas isLoading={isLoading}>
+            {currentDraft ? (
+              <AnimatePresence mode="popLayout">
+                {currentDraft.blocks.map((block) => (
+                  <EditableBlock
+                    key={block.id}
+                    block={block}
+                    onUpdate={handleBlockUpdate}
+                    onDelete={handleBlockDelete}
+                  />
+                ))}
+              </AnimatePresence>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center max-w-md">
+                  <Sparkles className="w-16 h-16 mx-auto text-primary mb-4" />
+                  <h2 className="text-2xl font-bold mb-2">Start Creating</h2>
+                  <p className="text-muted-foreground">
+                    Enter a prompt on the left to generate your first project
+                  </p>
+                </div>
+              </div>
+            )}
+          </Canvas>
+        </div>
+
+        <div className="w-80 border-l border-border">
+          <Panel title="Premium Actions">
+            <div className="space-y-3">
+              <Button
+                fullWidth
+                variant={unlockedFeatures.includes('action1') ? 'primary' : 'outline'}
+                isLocked={!unlockedFeatures.includes('action1')}
+                disabled={!unlockedFeatures.includes('action1')}
+              >
+                {unlockedFeatures.includes('action1') ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  <Lock className="w-4 h-4" />
+                )}
+                Advanced Export
+              </Button>
+
+              <Button
+                fullWidth
+                variant={unlockedFeatures.includes('action2') ? 'primary' : 'outline'}
+                isLocked={!unlockedFeatures.includes('action2')}
+                disabled={!unlockedFeatures.includes('action2')}
+              >
+                {unlockedFeatures.includes('action2') ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  <Lock className="w-4 h-4" />
+                )}
+                Custom Domain
+              </Button>
+
+              <Button
+                fullWidth
+                variant={unlockedFeatures.includes('action3') ? 'primary' : 'outline'}
+                isLocked={!unlockedFeatures.includes('action3')}
+                disabled={!unlockedFeatures.includes('action3')}
+              >
+                {unlockedFeatures.includes('action3') ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  <Lock className="w-4 h-4" />
+                )}
+                AI Optimizer
+              </Button>
+
+              <div className="pt-4 border-t border-border">
+                <Button
+                  fullWidth
+                  variant="payment"
+                  onClick={handlePayment}
+                  isLoading={isProcessingPayment}
+                >
+                  Unlock All Features - $9.99
+                </Button>
+              </div>
+            </div>
+          </Panel>
+        </div>
+      </div>
+
+      <Footer isSaved={!isSaving} lastSaved={currentDraft?.lastEdited} />
+
+      <AnimatePresence>
+        {publishUrl && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-20 right-6 p-4 bg-green-500 text-white rounded-xl shadow-lg z-50"
+          >
+            <p className="font-medium">Published successfully!</p>
+            <a href={publishUrl} target="_blank" rel="noopener noreferrer" className="text-sm underline">
+              {publishUrl}
+            </a>
+          </motion.div>
+        )}
+
+        {showPaymentSuccess && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-20 right-6 p-4 bg-green-500 text-white rounded-xl shadow-lg z-50"
+          >
+            <p className="font-medium">Payment successful!</p>
+            <p className="text-sm">All features unlocked 🎉</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {isPublishing && <Loader fullScreen text="Publishing your project..." />}
+    </div>
+  );
+}
