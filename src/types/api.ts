@@ -2,17 +2,7 @@ export interface Block {
   id: string;
   type: 'text' | 'heading' | 'image' | 'code';
   content: string;
-  style?: {
-    fontSize?: string;
-    fontWeight?: string;
-    textAlign?: string;
-    color?: string;
-    spacing?: string;
-    margin?: string;
-    padding?: string;
-    lineHeight?: string;
-    [key: string]: string | undefined;
-  };
+  style?: Record<string, string | undefined>;
 }
 
 export interface Draft {
@@ -20,6 +10,10 @@ export interface Draft {
   title: string;
   lastEdited: string;
   blocks: Block[];
+  status?: 'draft' | 'published';
+  createdAt?: string;
+  userId?: string;
+  publishedUrl?: string;
 }
 
 export interface CreatePayload {
