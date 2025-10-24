@@ -7,8 +7,8 @@ import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Creative Workspace - Adaptive Composition Studio",
-  description: "Build stunning interfaces instantly with our adaptive composition engine",
+  title: "Creative Workspace - Premium Composition Studio",
+  description: "Build stunning interfaces with our adaptive composition engine",
 };
 
 export default function RootLayout({

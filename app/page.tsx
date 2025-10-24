@@ -11,40 +11,36 @@ import Footer from "@/components/layout/footer";
 export default function Workspace() {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(true);
   const [lastSaved, setLastSaved] = useState<string | undefined>(undefined);
 
   const handleComposed = (newDraft: Draft) => {
     setDraft(newDraft);
     setIsSaved(false);
-  };
-
-  const handleSave = async () => {
-    setIsSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsSaving(false);
-    setIsSaved(true);
-    setLastSaved(new Date().toISOString());
-  };
-
-  const handlePublish = async () => {
-    console.log("Publishing draft:", draft);
+    setTimeout(() => {
+      setIsSaved(true);
+      setLastSaved(new Date().toISOString());
+    }, 1000);
   };
 
   return (
-    <div className="flex flex-col h-screen">
-      <Header onSave={handleSave} onPublish={handlePublish} isSaving={isSaving} />
-      <main className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4 p-4 overflow-hidden">
-        <div className="md:col-span-1 overflow-auto">
+    <div className="flex h-screen flex-col">
+      <Header />
+      
+      <main className="flex flex-1 gap-4 p-4 overflow-hidden bg-gradient-to-br from-background to-muted/20">
+        <div className="w-80 flex-shrink-0 hidden lg:block">
           <PromptPanel onComposed={handleComposed} />
         </div>
-        <div className="md:col-span-1 overflow-auto">
-          <EditorPanel draft={draft} />
-        </div>
-        <div className="md:col-span-1 overflow-auto">
+
+        <div className="flex-1 min-w-0">
           <PreviewPanel draft={draft} />
         </div>
+
+        <div className="w-80 flex-shrink-0 hidden lg:block">
+          <EditorPanel draft={draft} />
+        </div>
       </main>
+
       <Footer isSaved={isSaved} lastSaved={lastSaved} />
     </div>
   );

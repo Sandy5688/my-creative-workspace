@@ -35,6 +35,10 @@ const config: Config = {
           DEFAULT: "#FFFFFF",
           foreground: "#1F2937",
         },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
       },
       borderRadius: {
         lg: "16px",
