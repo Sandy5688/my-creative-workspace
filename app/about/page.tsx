@@ -4,7 +4,7 @@ import { ArrowLeft, Sparkles, Zap, Users, Target } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'About Us | Creative Workspace',
-  description: 'Learn about Creative Workspace - AI-powered design platform',
+  description: 'Learn about Creative Workspace - Adaptive-powered design platform',
 };
 
 export default function AboutPage() {
@@ -22,7 +22,7 @@ export default function AboutPage() {
         <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 mb-8">
           <h1 className="text-5xl font-bold text-slate-900 mb-4">About Creative Workspace</h1>
           <p className="text-xl text-slate-600 leading-relaxed">
-            Empowering creators to build stunning websites with the power of AI
+            Empowering creators to build stunning websites with the power of Adaptive
           </p>
         </div>
 
@@ -33,7 +33,7 @@ export default function AboutPage() {
             </div>
             <h2 className="text-2xl font-bold text-slate-900 mb-3">Our Mission</h2>
             <p className="text-slate-600 leading-relaxed">
-              To democratize professional web design by combining cutting-edge AI technology 
+              To democratize professional web design by combining cutting-edge Adaptive technology 
               with intuitive user experience, making it accessible to everyone.
             </p>
           </div>
@@ -59,7 +59,7 @@ export default function AboutPage() {
               </div>
               <h3 className="text-lg font-bold text-slate-900 mb-2">Lightning Fast</h3>
               <p className="text-slate-600">
-                Generate professional designs in seconds, not hours or days.
+                Compose professional designs in seconds, not hours or days.
               </p>
             </div>
 
@@ -67,9 +67,9 @@ export default function AboutPage() {
               <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-3">
                 <Sparkles className="w-5 h-5 text-blue-600" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">AI-Powered</h3>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">Adaptive-Powered</h3>
               <p className="text-slate-600">
-                Advanced AI understands your vision and creates stunning results.
+                Advanced Adaptive understands your vision and creates stunning results.
               </p>
             </div>
 

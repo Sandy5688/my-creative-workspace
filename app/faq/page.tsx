@@ -6,8 +6,8 @@ import { useState } from 'react';
 
 const faqs = [
   {
-    question: 'How does AI generation work?',
-    answer: 'Our AI analyzes your prompt and generates professional designs by combining advanced language models with design best practices. It creates both visual elements and copy tailored to your specific needs.',
+    question: 'How does Adaptive generation work?',
+    answer: 'Our Adaptive analyzes your prompt and generates professional designs by combining advanced language models with design best practices. It creates both visual elements and copy tailored to your specific needs.',
   },
   {
     question: 'Can I edit the generated designs?',
@@ -31,11 +31,11 @@ const faqs = [
   },
   {
     question: 'What makes Creative Workspace different?',
-    answer: 'We focus on quality over quantity, using state-of-the-art AI models to generate professional results. Our intuitive interface makes the creation process smooth and enjoyable.',
+    answer: 'We focus on quality over quantity, using state-of-the-art Adaptive models to generate professional results. Our intuitive interface makes the creation process smooth and enjoyable.',
   },
   {
     question: 'Do I need design or coding experience?',
-    answer: 'Not at all! Creative Workspace is designed for everyone, regardless of technical background. Just describe what you want, and our AI handles the rest.',
+    answer: 'Not at all! Creative Workspace is designed for everyone, regardless of technical background. Just describe what you want, and our Adaptive handles the rest.',
   },
   {
     question: 'How do I cancel my subscription?',

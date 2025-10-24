@@ -2,11 +2,26 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Menu } from "lucide-react";
+import { Sparkles, Menu, Rocket } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { usePayment } from "@/hooks/usePayment";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Header() {
+  const { processPayment, isLoading } = usePayment();
+  const { toast } = useToast();
+
+  const handleGoLive = async () => {
+    const result = await processPayment({ amount: 9.99, userId: "demo" });
+    if (result.success) {
+      toast({
+        title: "Features Unlocked! 🎉",
+        description: "Premium features are now available.",
+      });
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-6">
@@ -30,11 +45,19 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <Button 
+            onClick={handleGoLive}
+            disabled={isLoading}
+            size="sm"
+            className="gap-2"
+          >
+            <Rocket className="h-4 w-4" />
+            {isLoading ? "Processing..." : "Go Live"}
+          </Button>
           <ThemeToggle />
           <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
             Log in
           </Button>
-          <Button size="sm">Sign up</Button>
 
           <Sheet>
             <SheetTrigger asChild className="md:hidden">
@@ -49,7 +72,7 @@ export default function Header() {
                 <Link href="/docs" className="text-base font-medium">Docs</Link>
                 <div className="border-t pt-4 mt-4">
                   <Button variant="ghost" className="w-full justify-start mb-2">Log in</Button>
-                  <Button className="w-full">Sign up</Button>
+                  <Button className="w-full" onClick={handleGoLive}>Go Live</Button>
                 </div>
               </nav>
             </SheetContent>

@@ -1,39 +1,28 @@
-'use client';
+import { useState } from "react"
 
-import { useState } from 'react';
-import { PaymentPayload, PaymentResponse } from '@/types/api';
+interface PaymentPayload {
+  amount: number
+  userId: string
+  tier?: string
+}
 
 export function usePayment() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const processPayment = async (payload: PaymentPayload): Promise<PaymentResponse> => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // Simulate payment processing
-      await new Promise((resolve) => setTimeout(resolve, 700));
-
-      // Mock successful payment
-      const transactionId = `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      const response: PaymentResponse = {
-        success: true,
-        transactionId,
-        unlockedFeatures: ['action1', 'action2', 'action3', 'advanced_export', 'custom_domain'],
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
-      };
-
-      setIsLoading(false);
-      return response;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Payment failed';
-      setError(errorMessage);
-      setIsLoading(false);
-      throw new Error(errorMessage);
+  const [isLoading, setIsLoading] = useState(false)
+  
+  const processPayment = async (payload: PaymentPayload) => {
+    setIsLoading(true)
+    
+    // Simulate payment processing
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    
+    setIsLoading(false)
+    
+    return {
+      success: true,
+      transactionId: `txn_${Date.now()}`,
+      unlockedFeatures: ["advanced_export", "custom_domain", "premium_themes"]
     }
-  };
-
-  return { processPayment, isLoading, error };
+  }
+  
+  return { processPayment, isLoading }
 }

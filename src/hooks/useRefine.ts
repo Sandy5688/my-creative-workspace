@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { UpdatePayload, UpdateResponse } from '@/types/api';
 
-export function useUpdate() {
+export function useRefine() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

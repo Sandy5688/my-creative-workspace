@@ -59,7 +59,7 @@ export default function LandingHero() {
             <span className="text-yellow-300">In Seconds</span>
           </h1>
           <p className="text-lg text-white/90 max-w-lg mx-auto drop-shadow">
-            AI-powered workspace that transforms your ideas into professional designs
+            Adaptive-powered workspace that transforms your ideas into professional designs
           </p>
         </motion.div>
 

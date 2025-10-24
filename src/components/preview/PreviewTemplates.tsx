@@ -165,7 +165,7 @@ function TechStartupPreview() {
           animate={{ opacity: 1 }}
           style={{ fontSize: '1.5rem', marginBottom: '2rem', color: '#a5f3fc' }}
         >
-          Building the Future with AI
+          Building the Future with Adaptive
         </motion.p>
         
         <motion.button

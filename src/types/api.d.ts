@@ -35,11 +35,11 @@ export interface UpdateResponse {
   message: string;
 }
 
-export interface PublishRequest {
+export interface DeployRequest {
   draftId: string;
 }
 
-export interface PublishResponse {
+export interface DeployResponse {
   success: boolean;
   url: string;
 }

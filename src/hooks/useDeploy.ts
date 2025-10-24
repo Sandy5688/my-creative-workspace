@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { PublishPayload, PublishResponse } from '@/types/api';
+import { DeployPayload, DeployResponse } from '@/types/api';
 
-export function usePublish() {
+export function useDeploy() {
   const [isLoading, setIsLoading] = useState(false);
 
-  const publish = async (payload: PublishPayload): Promise<PublishResponse> => {
+  const publish = async (payload: DeployPayload): Promise<DeployResponse> => {
     setIsLoading(true);
 
     return new Promise((resolve) => {
@@ -14,7 +14,7 @@ export function usePublish() {
         const subdomain = payload.draftId.slice(0, 8);
         const publishedUrl = `https://${subdomain}.creativespace.app`;
 
-        const response: PublishResponse = {
+        const response: DeployResponse = {
           success: true,
           url: publishedUrl,
         };

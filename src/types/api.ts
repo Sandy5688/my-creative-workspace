@@ -44,11 +44,11 @@ export interface UpdateResponse {
   [key: string]: any;
 }
 
-export interface PublishPayload {
+export interface DeployPayload {
   draftId: string;
 }
 
-export interface PublishResponse {
+export interface DeployResponse {
   success: boolean;
   url: string;
   [key: string]: any;
