@@ -2,538 +2,298 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import Panel from '@/components/ui/Panel';
-import Canvas from '@/components/ui/Canvas';
-import Button from '@/components/ui/Button';
-import Textarea from '@/components/ui/Textarea';
-import EditableBlock from '@/components/workspace/EditableBlock';
-import Loader from '@/components/ui/Loader';
-import LandingHero from '@/components/ui/LandingHero';
-import PreviewTemplate from '@/components/preview/PreviewTemplates';
-import { useCreate } from '@/hooks/useCreate';
-import { useUpdate } from '@/hooks/useUpdate';
-import { usePublish } from '@/hooks/usePublish';
-import { usePayment } from '@/hooks/usePayment';
-import { useWorkspaceState } from '@/hooks/useWorkspaceState';
-import { useLocalWorkspace } from '@/hooks/useLocalWorkspace';
-import { useVoiceInput } from '@/hooks/useVoiceInput';
-import { Mic, MicOff, Sparkles, Lock, Check, Type, Image as ImageIcon, Code2, Play } from 'lucide-react';
-import { formatDate, generateId } from '@/lib/utils';
+import { Sparkles, Lock, Check, Zap, Download, Globe, Settings } from 'lucide-react';
 import { Block, Draft } from '@/types/api';
 
-export default function Home() {
+export default function HomePage() {
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [publishUrl, setPublishUrl] = useState<string | null>(null);
-  const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
-  const [previewType, setPreviewType] = useState<string>('');
-
-  const { create } = useCreate();
-  const { update } = useUpdate();
-  const { publish, isLoading: isPublishing } = usePublish();
-  const { processPayment, isLoading: isProcessingPayment } = usePayment();
-  const { isListening, transcript, isSupported, startListening, stopListening } = useVoiceInput();
-
-  const {
-    currentDraft,
-    isLoading,
-    isSaving,
-    unlockedFeatures,
-    setDraft,
-    setLoading,
-    setSaving,
-    unlockFeatures,
-    updateBlock,
-    deleteBlock,
-    addBlock,
-  } = useWorkspaceState();
-
-  const { value: savedDraft, setValue: saveDraftLocally } = useLocalWorkspace<Draft>(
-  'workspace-draft',
-  null
-);
-
-  useEffect(() => {
-    if (savedDraft && !currentDraft) {
-      setDraft(savedDraft);
-    }
-  }, [savedDraft, currentDraft, setDraft]);
-
-  useEffect(() => {
-    if (currentDraft) {
-      const timer = setTimeout(() => {
-        saveDraftLocally(currentDraft);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [currentDraft, saveDraftLocally]);
-
-  useEffect(() => {
-    if (transcript) {
-      setPrompt(transcript);
-    }
-  }, [transcript]);
+  const [preview, setPreview] = useState<Draft | null>(null);
+  const [isPremium, setIsPremium] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
-
+    
     setIsGenerating(true);
-    setLoading(true);
-
-    const lowerPrompt = prompt.toLowerCase();
-    if (lowerPrompt.includes('coffee')) setPreviewType('coffee shop');
-    else if (lowerPrompt.includes('tech') || lowerPrompt.includes('startup')) setPreviewType('tech startup');
-    else if (lowerPrompt.includes('fitness') || lowerPrompt.includes('gym')) setPreviewType('fitness app');
-    else if (lowerPrompt.includes('restaurant') || lowerPrompt.includes('food')) setPreviewType('restaurant');
-    else setPreviewType('default');
-
-    try {
-      const response = await create({
-        prompt,
-        settings: { tone: 'professional', length: 'medium' },
-      });
-
-      setDraft(response.previewData);
-      setPrompt('');
-    } catch (error) {
-      console.error('Generation failed:', error);
-    } finally {
+    
+    // Simulate AI generation
+    setTimeout(() => {
+      const mockDraft: Draft = {
+        id: `draft-${Date.now()}`,
+        title: prompt.charAt(0).toUpperCase() + prompt.slice(1),
+        lastEdited: new Date().toISOString(),
+        blocks: [
+          {
+            id: '1',
+            type: 'heading',
+            content: `Welcome to ${prompt.charAt(0).toUpperCase() + prompt.slice(1)}`,
+          },
+          {
+            id: '2',
+            type: 'text',
+            content: 'Your AI-generated content is ready. Upgrade to unlock full features.',
+          },
+        ],
+      };
+      
+      setPreview(mockDraft);
       setIsGenerating(false);
-      setLoading(false);
-    }
+    }, 2000);
   };
 
-  const handleVoiceToggle = () => {
-    if (isListening) {
-      stopListening();
-    } else {
-      startListening();
-    }
+  const handleUnlockPremium = async () => {
+    setIsProcessingPayment(true);
+    
+    // Simulate payment
+    setTimeout(() => {
+      setIsPremium(true);
+      setIsProcessingPayment(false);
+    }, 1500);
   };
 
-  const handleSave = async () => {
-    if (!currentDraft) return;
-
-    setSaving(true);
-    try {
-      await update({
-        draftId: currentDraft.id,
-        content: currentDraft,
-      });
-      saveDraftLocally(currentDraft);
-    } catch (error) {
-      console.error('Save failed:', error);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handlePublish = async () => {
-    if (!currentDraft) return;
-
-    try {
-      const response = await publish({
-        draftId: currentDraft.id,
-      });
-      setPublishUrl(response.url);
-      setTimeout(() => setPublishUrl(null), 5000);
-    } catch (error) {
-      console.error('Publish failed:', error);
-    }
-  };
-
-  const handlePayment = async () => {
-    try {
-      const response = await processPayment({
-        amount: 9.99,
-        userId: 'user_demo',
-        plan: 'pro',
-      });
-      unlockFeatures(response.unlockedFeatures);
-      setShowPaymentSuccess(true);
-      setTimeout(() => setShowPaymentSuccess(false), 3000);
-    } catch (error) {
-      console.error('Payment failed:', error);
-    }
-  };
-
-  const handleBlockUpdate = (blockId: string, content: string) => {
-    updateBlock(blockId, content);
-  };
-
-  const handleBlockDelete = (blockId: string) => {
-    deleteBlock(blockId);
-  };
-
-  const handleAddBlock = (type: Block['type']) => {
-    const newBlock: Block = {
-      id: generateId(),
-      type,
-      content: type === 'text' ? 'New text block...' : '',
-    };
-    addBlock(newBlock);
-  };
+  const FeatureButton = ({ 
+    icon: Icon, 
+    label, 
+    locked 
+  }: { 
+    icon: any; 
+    label: string; 
+    locked: boolean;
+  }) => (
+    <motion.button
+      whileHover={!locked ? { scale: 1.02, y: -2 } : {}}
+      whileTap={!locked ? { scale: 0.98 } : {}}
+      disabled={locked}
+      className={`
+        relative group flex items-center gap-3 px-6 py-4 rounded-2xl font-medium text-sm transition-all
+        ${locked 
+          ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
+          : 'bg-white text-slate-700 hover:bg-slate-50 shadow-sm hover:shadow-md'
+        }
+      `}
+    >
+      <Icon className="w-5 h-5" />
+      <span>{label}</span>
+      {locked && (
+        <Lock className="w-4 h-4 ml-auto text-slate-300" />
+      )}
+      {!locked && (
+        <div className="ml-auto w-2 h-2 bg-green-500 rounded-full" />
+      )}
+    </motion.button>
+  );
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
-      <Header onSave={handleSave} onPublish={handlePublish} isSaving={isSaving} />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      {/* Header */}
+      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <span className="font-bold text-xl text-slate-900">Creative Workspace</span>
+          </div>
+          
+          <nav className="flex items-center gap-6">
+            <a href="/about" className="text-slate-600 hover:text-slate-900 text-sm font-medium transition-colors">
+              About
+            </a>
+            <a href="/faq" className="text-slate-600 hover:text-slate-900 text-sm font-medium transition-colors">
+              FAQ
+            </a>
+            {isPremium && (
+              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full">
+                <Check className="w-4 h-4 text-white" />
+                <span className="text-sm font-semibold text-white">Premium</span>
+              </div>
+            )}
+          </nav>
+        </div>
+      </header>
 
-      {/* MOBILE LAYOUT */}
-      <div className="lg:hidden flex-1 overflow-y-auto" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 100%)' }}>
-        <div className="p-4 space-y-4 pb-24">
-          {/* Prompt Card */}
-          <div className="glass-card rounded-2xl p-5">
-            <h2 className="text-lg font-bold text-slate-900 mb-4">Prompt Zone</h2>
-            <div className="space-y-3">
-              <div className="relative">
-                <Textarea
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-6 py-12">
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Left: Generator */}
+          <div className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-3xl shadow-lg p-8"
+            >
+              <h1 className="text-3xl font-bold text-slate-900 mb-2">
+                Create Something Amazing
+              </h1>
+              <p className="text-slate-600 mb-8">
+                Describe what you want to build, and watch AI bring it to life.
+              </p>
+
+              <div className="space-y-4">
+                <textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Describe what you want to create..."
-                  rows={4}
-                  className="resize-none text-base pr-14"
+                  placeholder="e.g., modern coffee shop landing page"
+                  className="w-full h-32 px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:border-blue-500 focus:outline-none resize-none text-slate-900 placeholder:text-slate-400"
                 />
-                {isSupported && (
-                  <motion.button
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleVoiceToggle}
-                    className={`absolute bottom-3 right-3 p-2.5 rounded-lg transition-all ${
-                      isListening 
-                        ? 'bg-red-500 text-white animate-pulse' 
-                        : 'hover:bg-slate-100 text-slate-400'
-                    }`}
-                  >
-                    {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
-                  </motion.button>
-                )}
-              </div>
 
-              <motion.button
-                whileTap={{ scale: 0.97 }}
-                onClick={handleGenerate}
-                disabled={!prompt.trim() || isGenerating}
-                style={{
-                  width: '100%',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  color: 'white',
-                  fontWeight: 600,
-                  padding: '1rem',
-                  borderRadius: '0.75rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.5rem',
-                  border: 'none',
-                  cursor: 'pointer',
-                  boxShadow: '0 10px 25px rgba(102, 126, 234, 0.4)',
-                  opacity: !prompt.trim() || isGenerating ? 0.5 : 1,
-                }}
-              >
-                {isGenerating ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>Generating...</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-5 h-5" />
-                    <span>Generate</span>
-                  </>
-                )}
-              </motion.button>
-            </div>
-          </div>
-
-          {/* Live Preview Card */}
-          <div className="glass-card rounded-2xl overflow-hidden">
-            <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-white">
-              <h2 className="text-lg font-bold text-slate-900">Live Preview</h2>
-              {previewType && (
-                <span className="px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-xs font-semibold flex items-center gap-1">
-                  <Play className="w-3 h-3" />
-                  Animated
-                </span>
-              )}
-            </div>
-            <div className="h-80">
-              {previewType ? (
-                <PreviewTemplate type={previewType} />
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full text-center p-6 bg-slate-50">
-                  <motion.div
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="w-14 h-14 bg-slate-200 rounded-xl flex items-center justify-center mb-3"
-                  >
-                    <Sparkles className="w-7 h-7 text-slate-400" />
-                  </motion.div>
-                  <p className="text-sm font-medium text-slate-900 mb-1">Ready to create</p>
-                  <p className="text-xs text-slate-500">Enter a prompt to see animated preview</p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Editor Card */}
-          {currentDraft && (
-            <div className="glass-card rounded-2xl p-5">
-              <h2 className="text-lg font-bold text-slate-900 mb-4">Add Elements</h2>
-              <div className="grid grid-cols-3 gap-3">
                 <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleAddBlock('text')}
-                  className="flex flex-col items-center gap-2 p-4 bg-slate-50 hover:bg-slate-100 rounded-xl transition-all"
+                  onClick={handleGenerate}
+                  disabled={isGenerating || !prompt.trim()}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-2xl font-semibold text-base shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  <Type className="w-6 h-6 text-slate-700" />
-                  <span className="text-xs font-medium text-slate-700">Text</span>
-                </motion.button>
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleAddBlock('image')}
-                  className="flex flex-col items-center gap-2 p-4 bg-slate-50 hover:bg-slate-100 rounded-xl transition-all"
-                >
-                  <ImageIcon className="w-6 h-6 text-slate-700" />
-                  <span className="text-xs font-medium text-slate-700">Image</span>
-                </motion.button>
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleAddBlock('code')}
-                  className="flex flex-col items-center gap-2 p-4 bg-slate-50 hover:bg-slate-100 rounded-xl transition-all"
-                >
-                  <Code2 className="w-6 h-6 text-slate-700" />
-                  <span className="text-xs font-medium text-slate-700">Code</span>
+                  {isGenerating ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Generating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-5 h-5" />
+                      <span>Generate</span>
+                    </>
+                  )}
                 </motion.button>
               </div>
-            </div>
-          )}
+            </motion.div>
 
-          {/* Premium Card */}
-          <motion.div
-            whileHover={{ scale: 1.01 }}
-            style={{
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              borderRadius: '1rem',
-              padding: '1.5rem',
-              color: 'white',
-              boxShadow: '0 20px 40px rgba(102, 126, 234, 0.3)',
-            }}
-          >
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h2 className="text-lg font-bold mb-1">Go Premium</h2>
-                <p className="text-sm text-white/80">Unlock all features</p>
-              </div>
-              {unlockedFeatures.length > 0 && (
-                <div className="bg-white/20 backdrop-blur px-2.5 py-1.5 rounded-lg">
-                  <Check className="w-4 h-4" />
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-2.5 mb-5">
-              <div className="flex items-center gap-2.5 text-sm">
-                <Check className="w-4 h-4 flex-shrink-0" />
-                <span>Advanced Export</span>
-              </div>
-              <div className="flex items-center gap-2.5 text-sm">
-                <Check className="w-4 h-4 flex-shrink-0" />
-                <span>Custom Domains</span>
-              </div>
-              <div className="flex items-center gap-2.5 text-sm">
-                <Check className="w-4 h-4 flex-shrink-0" />
-                <span>AI Optimizer</span>
-              </div>
-            </div>
-
-            <motion.button
-              whileTap={{ scale: 0.97 }}
-              onClick={handlePayment}
-              disabled={isProcessingPayment || unlockedFeatures.length > 0}
-              style={{
-                width: '100%',
-                background: 'white',
-                color: '#667eea',
-                fontWeight: 600,
-                padding: '1rem',
-                borderRadius: '0.75rem',
-                border: 'none',
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                opacity: isProcessingPayment || unlockedFeatures.length > 0 ? 0.5 : 1,
-              }}
+            {/* Features Panel */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-white rounded-3xl shadow-lg p-8"
             >
-              {unlockedFeatures.length > 0 ? '✓ Premium Active' : isProcessingPayment ? 'Processing...' : 'Unlock for $9.99'}
-            </motion.button>
-          </motion.div>
-        </div>
-      </div>
-      {/* DESKTOP LAYOUT */}
-      <div className="hidden lg:flex flex-1 overflow-hidden">
-        <div className="w-72 border-r border-slate-200 bg-white overflow-y-auto">
-          <Panel title="Create with AI">
-            <div className="space-y-4">
-              <Textarea
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Describe what you want to create..."
-                rows={5}
-                className="resize-none"
-              />
+              <h2 className="text-xl font-bold text-slate-900 mb-6">Actions</h2>
+              
+              <div className="space-y-3">
+                <FeatureButton icon={Settings} label="Edit & Customize" locked={false} />
+                <FeatureButton icon={Download} label="Export Project" locked={!isPremium} />
+                <FeatureButton icon={Globe} label="Publish to Web" locked={!isPremium} />
+                <FeatureButton icon={Zap} label="Advanced Features" locked={!isPremium} />
+              </div>
 
-              <div className="flex gap-2">
-                <Button fullWidth onClick={handleGenerate} isLoading={isGenerating} disabled={!prompt.trim()}>
-                  <Sparkles className="w-4 h-4" />
-                  Generate
-                </Button>
-                {isSupported && (
-                  <Button 
-                    variant={isListening ? 'primary' : 'ghost'} 
-                    size="md"
-                    onClick={handleVoiceToggle}
+              {!isPremium && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="mt-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100"
+                >
+                  <h3 className="font-bold text-slate-900 mb-2">Unlock All Features</h3>
+                  <p className="text-sm text-slate-600 mb-4">
+                    Get unlimited exports, custom domains, and priority support.
+                  </p>
+                  
+                  <motion.button
+                    onClick={handleUnlockPremium}
+                    disabled={isProcessingPayment}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                  </Button>
+                    {isProcessingPayment ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>Processing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Check className="w-4 h-4" />
+                        <span>Upgrade to Premium - $9.99</span>
+                      </>
+                    )}
+                  </motion.button>
+                </motion.div>
+              )}
+            </motion.div>
+          </div>
+
+          {/* Right: Preview */}
+          <div className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-white rounded-3xl shadow-lg p-8 min-h-[600px]"
+            >
+              <h2 className="text-xl font-bold text-slate-900 mb-6">Preview</h2>
+              
+              <AnimatePresence mode="wait">
+                {preview ? (
+                  <motion.div
+                    key="preview"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="space-y-6"
+                  >
+                    {preview.blocks.map((block, index) => (
+                      <motion.div
+                        key={block.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        {block.type === 'heading' && (
+                          <h3 className="text-2xl font-bold text-slate-900">{block.content}</h3>
+                        )}
+                        {block.type === 'text' && (
+                          <p className="text-slate-600 leading-relaxed">{block.content}</p>
+                        )}
+                      </motion.div>
+                    ))}
+                    
+                    <div className="pt-6 border-t border-slate-200">
+                      <div className="flex items-center gap-3 text-sm text-slate-500">
+                        <Check className="w-4 h-4 text-green-500" />
+                        <span>Content generated successfully</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="empty"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex flex-col items-center justify-center h-full text-center py-20"
+                  >
+                    <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                      <Sparkles className="w-8 h-8 text-slate-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-slate-700 mb-2">
+                      No preview yet
+                    </h3>
+                    <p className="text-slate-500 text-sm max-w-sm">
+                      Enter a prompt and click generate to see your AI-powered creation.
+                    </p>
+                  </motion.div>
                 )}
-              </div>
-
-              {currentDraft && (
-                <>
-                  <div className="mt-6 pt-6 border-t border-slate-200">
-                    <h3 className="text-sm font-semibold mb-3">Current Draft</h3>
-                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                      <p className="text-sm font-medium text-slate-900 line-clamp-1">{currentDraft.title}</p>
-                      <p className="text-xs text-slate-500 mt-1">{formatDate(currentDraft.lastEdited)}</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 pt-6 border-t border-slate-200">
-                    <h3 className="text-sm font-semibold mb-3">Add Content</h3>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button size="sm" variant="outline" onClick={() => handleAddBlock('text')}>
-                        <Type className="w-4 h-4" />
-                        Text
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => handleAddBlock('heading')}>
-                        Heading
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => handleAddBlock('image')}>
-                        <ImageIcon className="w-4 h-4" />
-                        Image
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => handleAddBlock('code')}>
-                        <Code2 className="w-4 h-4" />
-                        Code
-                      </Button>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          </Panel>
-        </div>
-
-        <div className="flex-1 flex flex-col overflow-hidden bg-white">
-          <Canvas isLoading={isLoading}>
-            {previewType ? (
-              <PreviewTemplate type={previewType} />
-            ) : currentDraft ? (
-              <AnimatePresence mode="popLayout">
-                {currentDraft.blocks.map((block) => (
-                  <EditableBlock
-                    key={block.id}
-                    block={block}
-                    onUpdate={handleBlockUpdate}
-                    onDelete={handleBlockDelete}
-                  />
-                ))}
               </AnimatePresence>
-            ) : (
-              <LandingHero />
-            )}
-          </Canvas>
+            </motion.div>
+          </div>
         </div>
+      </main>
 
-        <div className="w-72 border-l border-slate-200 bg-white overflow-y-auto">
-          <Panel title="Premium Features">
-            <div className="space-y-3">
-              <Button
-                fullWidth
-                variant={unlockedFeatures.includes('action1') ? 'primary' : 'outline'}
-                disabled={!unlockedFeatures.includes('action1')}
-              >
-                {unlockedFeatures.includes('action1') ? <Check className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
-                Advanced Export
-              </Button>
-
-              <Button
-                fullWidth
-                variant={unlockedFeatures.includes('action2') ? 'primary' : 'outline'}
-                disabled={!unlockedFeatures.includes('action2')}
-              >
-                {unlockedFeatures.includes('action2') ? <Check className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
-                Custom Domain
-              </Button>
-
-              <Button
-                fullWidth
-                variant={unlockedFeatures.includes('action3') ? 'primary' : 'outline'}
-                disabled={!unlockedFeatures.includes('action3')}
-              >
-                {unlockedFeatures.includes('action3') ? <Check className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
-                AI Optimizer
-              </Button>
-
-              <div className="pt-4 border-t border-slate-200">
-                <Button fullWidth variant="payment" onClick={handlePayment} isLoading={isProcessingPayment}>
-                  {unlockedFeatures.length > 0 ? '✓ Premium Active' : 'Unlock All - $9.99'}
-                </Button>
-              </div>
-
-              {unlockedFeatures.length > 0 && (
-                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-xl">
-                  <p className="text-sm font-semibold text-green-800">✓ Premium Active</p>
-                  <p className="text-xs text-green-600 mt-1">All features unlocked</p>
-                </div>
-              )}
+      {/* Footer */}
+      <footer className="bg-white border-t border-slate-200 mt-20">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-slate-500">
+              © 2025 Creative Workspace. All rights reserved.
+            </p>
+            <div className="flex items-center gap-6 text-sm text-slate-500">
+              <a href="/privacy" className="hover:text-slate-900 transition-colors">Privacy</a>
+              <a href="/terms" className="hover:text-slate-900 transition-colors">Terms</a>
+              <a href="/about" className="hover:text-slate-900 transition-colors">About</a>
+              <a href="/faq" className="hover:text-slate-900 transition-colors">FAQ</a>
             </div>
-          </Panel>
+          </div>
         </div>
-      </div>
-
-      <Footer isSaved={!isSaving} lastSaved={currentDraft?.lastEdited} />
-
-      {/* Notifications */}
-      <AnimatePresence>
-        {publishUrl && (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-            className="fixed bottom-20 left-4 right-4 lg:left-auto lg:right-6 lg:w-96 p-4 bg-green-600 text-white rounded-2xl shadow-2xl z-50"
-          >
-            <p className="font-semibold">✓ Published successfully!</p>
-            <a href={publishUrl} target="_blank" rel="noopener noreferrer" className="text-sm underline opacity-90 block mt-1 truncate">
-              {publishUrl}
-            </a>
-          </motion.div>
-        )}
-
-        {showPaymentSuccess && (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-            className="fixed bottom-20 left-4 right-4 lg:left-auto lg:right-6 lg:w-96 p-4 bg-green-600 text-white rounded-2xl shadow-2xl z-50"
-          >
-            <p className="font-semibold">✓ Payment successful!</p>
-            <p className="text-sm opacity-90 mt-1">All premium features unlocked 🎉</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {isPublishing && <Loader fullScreen text="Publishing your project..." />}
+      </footer>
     </div>
   );
 }
