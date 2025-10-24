@@ -1,443 +1,267 @@
-# Creative Workspace - AI-Powered Website Generator
+# 🚨 BUILD ERROR FIX - CORRECTED FILES
 
-A modern, production-ready frontend application for generating professional website designs with AI assistance. Built with Next.js 14, TypeScript, Tailwind CSS, and Framer Motion.
+## ⚠️ What Went Wrong
 
-[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://my-creative-workspace.vercel.app)
-[![GitHub](https://img.shields.io/badge/github-repo-blue)](https://github.com/princeflexzy0/my-creative-workspace)
+Your previous build failed because the component files got corrupted during copying. Here's what happened:
 
----
+### Problems Identified:
 
-## 🎯 Project Status
+1. **`src/lib/utils.ts` had wrong content** ❌
+   - Had Panel component code mixed in
+   - Should only contain the `cn` utility function
+   
+2. **Missing `toast.tsx` component** ❌
+   - Toaster component depends on this
+   
+3. **Missing `toaster.tsx` component** ❌
+   - Required by `app/layout.tsx`
+   
+4. **`sheet.tsx` exports were wrong** ❌
+   - May have had Select component code instead
+   
+5. **Missing `@radix-ui/react-toast` package** ❌
+   - Required for toast functionality
 
-**Frontend Development:** ✅ 100% Complete  
-**Deployment:** ✅ Live on Vercel  
-**Backend:** ⏳ Ready for Integration  
-**Delivery Date:** October 24, 2025
+## ✅ Complete Solution
 
-**Live Site:** https://my-creative-workspace.vercel.app
+This CORRECTED folder contains ALL the properly formatted files you need.
 
----
+### What's Included:
 
-## ✨ Features
+#### UI Components (`src/components/ui/`)
+- ✅ `button.tsx` - Button component
+- ✅ `textarea.tsx` - Text input
+- ✅ `select.tsx` - Dropdown select
+- ✅ `sheet.tsx` - Slide-out panel (CORRECTED)
+- ✅ `panel.tsx` - Card/panel container
+- ✅ `dropdown-menu.tsx` - Dropdown menu
+- ✅ `toast.tsx` - Toast notification primitive (NEW)
+- ✅ `toaster.tsx` - Toast notification container (NEW)
 
-### 🎨 User Interface
-- **Animated Landing Page** - Glass-morphism design with gradient backgrounds
-- **AI Prompt Input** - Text-based content generation interface
-- **Live Preview System** - 4 animated template previews (Coffee, Tech, Fitness, Restaurant)
-- **Premium Features Card** - Payment flow UI
-- **Responsive Design** - Mobile-first, works on all devices
+#### Workspace Components (`src/components/workspace/`)
+- ✅ `editor-panel.tsx` - Content editor
+- ✅ `preview-panel.tsx` - Content preview
 
-### 📄 Pages
-- `/` - Main workspace with AI generation UI
-- `/about` - Company information and mission
-- `/faq` - Interactive FAQ with accordion
-- `/privacy` - Privacy policy
-- `/terms` - Terms of service
-- `/404` - Custom error page
+#### Utilities (`src/lib/`)
+- ✅ `utils.ts` - CORRECTED version with only the `cn` function
 
-### 🛠️ Technical Features
-- **Next.js 16** with App Router
-- **TypeScript** for type safety
-- **Tailwind CSS** for styling
-- **Framer Motion** for animations
-- **Stubbed APIs** ready for backend integration
-- **Local Persistence** with localStorage
-- **SEO Optimized** with meta tags
-- **Accessible** with ARIA labels
+#### Hooks (`src/hooks/`)
+- ✅ `use-toast.ts` - CORRECTED toast hook
+- ✅ `useCompose.ts` - Composition hook (keep your existing one)
 
----
+## 🚀 Installation Steps
 
-## ⚠️ Known Issues & Solutions
+### Option 1: Automated (Recommended)
 
-### Voice Input Feature
-**Status:** UI implemented but requires server-side implementation
-
-**Current Behavior:**
-- Voice button visible in UI
-- Works in local development
-- Limited functionality in production due to browser API constraints
-
-**Recommended Solution for Production:**
-Implement server-side voice transcription using:
-- **Google Cloud Speech-to-Text API** - Industry standard
-- **AWS Transcribe** - Scalable solution
-- **OpenAI Whisper API** - High accuracy
-
-**Workaround:**
-Users can type prompts directly (primary interaction method). The text input works perfectly and is the main feature.
-
-**Impact:** Low - Text input is the primary and recommended method
-
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-
-### Installation
 ```bash
-# Clone repository
-git clone https://github.com/princeflexzy0/my-creative-workspace.git
-cd my-creative-workspace
+# 1. Navigate to your project
+cd /workspaces/my-creative-workspace
 
-# Install dependencies
-npm install
-
-# Run development server
-npm run dev
+# 2. Make the script executable and run it
+chmod +x INSTALL_AND_FIX.sh
+./INSTALL_AND_FIX.sh
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+The script will:
+- Install all dependencies
+- Verify file structure
+- Check for missing files
+- Test the build locally
 
-### Build for Production
+### Option 2: Manual Installation
+
+#### Step 1: Install Dependencies
+
 ```bash
-# Create production build
+npm install @radix-ui/react-slot @radix-ui/react-select @radix-ui/react-dialog @radix-ui/react-dropdown-menu @radix-ui/react-toast class-variance-authority clsx tailwind-merge tailwindcss-animate
+```
+
+#### Step 2: **IMPORTANT - Remove Corrupted Files First**
+
+```bash
+# Remove the corrupted utils.ts
+rm src/lib/utils.ts
+
+# Remove any other potentially corrupted files
+rm -rf src/components/ui/button.tsx
+rm -rf src/components/ui/sheet.tsx
+```
+
+#### Step 3: Copy ALL Files from CORRECTED Folder
+
+Copy all files from this CORRECTED folder to your project:
+
+```bash
+# Copy utilities
+cp CORRECTED/src/lib/utils.ts src/lib/
+
+# Copy UI components
+cp CORRECTED/src/components/ui/*.tsx src/components/ui/
+
+# Copy workspace components  
+cp CORRECTED/src/components/workspace/*.tsx src/components/workspace/
+
+# Copy hooks (only use-toast.ts, keep your useCompose.ts)
+cp CORRECTED/src/hooks/use-toast.ts src/hooks/
+```
+
+#### Step 4: Verify All Files
+
+Make sure these files exist and have the correct content:
+
+```bash
+ls -la src/lib/utils.ts
+ls -la src/components/ui/
+ls -la src/components/workspace/
+ls -la src/hooks/
+```
+
+#### Step 5: Test Build Locally
+
+```bash
 npm run build
-
-# Start production server
-npm start
 ```
 
----
-
-## 📁 Project Structure
+If successful, you'll see:
 ```
-my-creative-workspace/
-├── app/
-│   ├── layout.tsx           # Root layout
-│   ├── page.tsx             # Main workspace
-│   ├── globals.css          # Global styles
-│   ├── about/page.tsx       # About page
-│   ├── faq/page.tsx         # FAQ page
-│   ├── privacy/page.tsx     # Privacy policy
-│   ├── terms/page.tsx       # Terms of service
-│   └── not-found.tsx        # 404 page
-├── src/
-│   ├── components/
-│   │   ├── layout/          # Header, Footer
-│   │   ├── ui/              # Reusable UI components
-│   │   ├── preview/         # Preview templates
-│   │   └── workspace/       # Workspace components
-│   ├── hooks/               # Custom React hooks (API layer)
-│   │   ├── useCreate.ts     # Content generation
-│   │   ├── useUpdate.ts     # Draft updates
-│   │   ├── usePublish.ts    # Publishing
-│   │   ├── usePayment.ts    # Payments
-│   │   └── useVoiceInput.ts # Voice input
-│   ├── types/
-│   │   └── api.ts           # TypeScript interfaces
-│   └── lib/
-│       └── utils.ts         # Utility functions
-├── public/                  # Static assets
-├── README.md               # This file
-├── DELIVERY.md             # Delivery documentation
-└── package.json            # Dependencies
+✓ Compiled successfully
+✓ Collecting page data
+✓ Generating static pages
 ```
 
----
+#### Step 6: Deploy
 
-## 🔌 Backend Integration Guide
-
-All API endpoints are stubbed and ready for backend implementation.
-
-### 1. Content Generation API
-
-**Endpoint:** `POST /api/create`
-
-**Request:**
-```json
-{
-  "prompt": "coffee shop landing page",
-  "settings": {
-    "tone": "professional",
-    "length": "medium"
-  }
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "draftId": "uuid-string",
-  "previewData": {
-    "id": "uuid-string",
-    "title": "Coffee Shop Landing",
-    "lastEdited": "2025-10-24T00:00:00Z",
-    "blocks": [
-      {
-        "id": "block-1",
-        "type": "heading",
-        "content": "Welcome to Brew Haven"
-      },
-      {
-        "id": "block-2",
-        "type": "text",
-        "content": "Artisan coffee and pastries..."
-      }
-    ]
-  }
-}
-```
-
-**AI Services Required:**
-- **OpenAI GPT-4** - Text generation
-- **DALL-E 3** or **Stable Diffusion** - Image generation
-
----
-
-### 2. Update Draft API
-
-**Endpoint:** `POST /api/update`
-
-**Request:**
-```json
-{
-  "draftId": "uuid-string",
-  "content": {
-    "blocks": [...]
-  }
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "message": "Draft updated"
-}
-```
-
----
-
-### 3. Publish Website API
-
-**Endpoint:** `POST /api/publish`
-
-**Request:**
-```json
-{
-  "draftId": "uuid-string"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "url": "https://abc123.creativespace.app"
-}
-```
-
-**Storage Required:** AWS S3, Cloudinary, or similar
-
----
-
-### 4. Payment API
-
-**Endpoint:** `POST /api/payment`
-
-**Request:**
-```json
-{
-  "amount": 9.99,
-  "userId": "user-id",
-  "plan": "pro"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "transactionId": "txn_123",
-  "unlockedFeatures": ["unlimited", "export", "custom-domain"]
-}
-```
-
-**Payment Provider:** Stripe (recommended)
-
----
-
-## 💾 Data Models
-
-### Draft
-```typescript
-interface Draft {
-  id: string;
-  title: string;
-  lastEdited: string;
-  blocks: Block[];
-  status?: 'draft' | 'published';
-  createdAt?: string;
-}
-```
-
-### Block
-```typescript
-interface Block {
-  id: string;
-  type: 'text' | 'heading' | 'image' | 'code';
-  content: string;
-  style?: Record<string, string>;
-}
-```
-
-See `src/types/api.ts` for complete type definitions.
-
----
-
-## 💰 Backend Cost Estimates
-
-**Per 1,000 Generations:**
-- OpenAI GPT-4: $20
-- DALL-E 3: $40
-- Database (PostgreSQL): $10
-- File Storage (S3): $5
-- Hosting: $20
-
-**Monthly Total:** ~$95 for 1,000 generations
-
-**Scalable Options:**
-- Use Replicate.com for cheaper image generation
-- Cache common prompts to reduce API calls
-- Implement usage tiers
-
----
-
-## �� Deployment
-
-### Vercel (Current - Recommended)
 ```bash
-# Install Vercel CLI
-npm install -g vercel
-
-# Deploy
+git add .
+git commit -m "fix: Replace corrupted files with corrected components"
+git push
 vercel --prod
 ```
 
-**Auto-Deploy:** Enabled on `main` branch
+## 🔍 File Content Verification
 
-### Alternative Platforms
-- **Netlify** - Similar to Vercel
-- **AWS Amplify** - Enterprise solution
-- **Railway** - Simple deployment
+### ✅ CORRECT `src/lib/utils.ts` should look like:
+```typescript
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
 
----
-
-## 🧪 Testing
-
-### Functionality Testing
-```bash
-npm run dev
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
 ```
 
-Test all features:
-- [ ] Homepage loads with animations
-- [ ] Prompt input accepts text
-- [ ] Generate button creates preview
-- [ ] All 4 templates display
-- [ ] Premium card interaction
-- [ ] Navigation between pages
-- [ ] 404 page on invalid URLs
+❌ If it contains React components or JSX, it's **WRONG** - replace it!
 
-### Build Testing
-```bash
-npm run build
-npm start
+### ✅ CORRECT `src/components/ui/sheet.tsx` exports:
+```typescript
+export {
+  Sheet,
+  SheetPortal,
+  SheetOverlay,
+  SheetTrigger,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
+}
 ```
 
-### Browser Support
-- ✅ Chrome 90+
-- ✅ Safari 14+
-- ✅ Firefox 88+
-- ✅ Edge 90+
+### ✅ NEW files that must exist:
+- `src/components/ui/toast.tsx` - Base toast component
+- `src/components/ui/toaster.tsx` - Toast container
 
----
+## 📦 Complete Dependency List
 
-## 🎨 Design System
+Your `package.json` should include:
 
-### Colors
-```css
-Primary: #7c3aed (Violet)
-Secondary: #9333ea (Purple)
-Accent: #ec4899 (Pink)
-Background: #f8fafc (Slate)
+```json
+{
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-select": "^2.0.0",
+    "@radix-ui/react-dialog": "^1.0.5",
+    "@radix-ui/react-dropdown-menu": "^2.0.6",
+    "@radix-ui/react-toast": "^1.1.5",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0",
+    "tailwindcss-animate": "^1.0.7"
+  }
+}
 ```
 
-### Typography
-- **Font:** Inter (Google Fonts)
-- **Weights:** 400, 500, 600, 700, 800
+## 🎯 Expected Build Output
 
-### Spacing
-- Base: 4px
-- Scale: 0.25rem, 0.5rem, 0.75rem, 1rem, 1.25rem, 1.5rem, 2rem, 3rem, 4rem
+After fixing, your Vercel build should show:
 
----
+```
+✅ Creating an optimized production build ...
+✓ Compiled successfully
+✓ Linting and checking validity of types
+✓ Collecting page data
+✓ Generating static pages (4/4)
+✓ Collecting build traces
+✓ Finalizing page optimization
 
-## 📝 Environment Variables (Backend)
-```env
-# OpenAI
-OPENAI_API_KEY=sk-...
-
-# Database
-DATABASE_URL=postgresql://...
-
-# Stripe
-STRIPE_SECRET_KEY=sk_...
-
-# AWS S3
-AWS_ACCESS_KEY_ID=...
-AWS_SECRET_ACCESS_KEY=...
-AWS_BUCKET_NAME=...
+✅ Production: https://my-creative-workspace-[hash].vercel.app
 ```
 
+## 🐛 Troubleshooting
+
+### Build Still Failing?
+
+1. **Check utils.ts content**
+   ```bash
+   cat src/lib/utils.ts
+   ```
+   Should only have 5 lines with the `cn` function.
+
+2. **Verify toast components exist**
+   ```bash
+   ls -la src/components/ui/toast*.tsx
+   ```
+   Should show `toast.tsx` and `toaster.tsx`
+
+3. **Check all imports in your existing files**
+   Make sure `app/layout.tsx` has:
+   ```typescript
+   import { Toaster } from "@/components/ui/toaster"
+   ```
+
+4. **Clear cache and rebuild**
+   ```bash
+   rm -rf .next node_modules/.cache
+   npm install
+   npm run build
+   ```
+
+## ✅ Checklist Before Deploying
+
+- [ ] All dependencies installed (including `@radix-ui/react-toast`)
+- [ ] `src/lib/utils.ts` contains ONLY the cn function
+- [ ] `src/components/ui/toast.tsx` exists
+- [ ] `src/components/ui/toaster.tsx` exists
+- [ ] All 9 UI components in `src/components/ui/` folder
+- [ ] Both workspace components in `src/components/workspace/` folder
+- [ ] Local build succeeds (`npm run build`)
+- [ ] All files committed to git
+- [ ] Ready to run `vercel --prod`
+
+## 🎉 Success Indicators
+
+When everything is fixed, you'll see:
+- ✅ Local build completes without errors
+- ✅ Vercel deployment succeeds
+- ✅ Your app is live at the production URL
+- ✅ No TypeScript errors
+- ✅ All components load correctly
+
 ---
 
-## 🤝 Contributing
-
-This is a client project. For questions or modifications:
-
-**Developer:** [Your Name]  
-**Email:** [Your Email]  
-**GitHub:** @princeflexzy0
-
----
-
-## 📄 License
-
-Proprietary - All rights reserved by client
-
----
-
-## 📞 Support
-
-For technical questions or backend integration support, please contact the development team.
-
-**Documentation:**
-- Technical: This README
-- Delivery: See `DELIVERY.md`
-- API Specs: See `src/types/api.ts`
-
----
-
-## ✅ Delivery Checklist
-
-- [x] Complete source code
-- [x] Live deployment
-- [x] Technical documentation
-- [x] API specifications
-- [x] Type definitions
-- [x] All pages implemented
-- [x] Responsive design
-- [x] Error handling
-- [x] Loading states
-- [x] Accessibility features
-
----
-
-**Last Updated:** October 24, 2025  
-**Version:** 1.0.0  
-**Status:** Production Ready ✅
+**Need Help?** Double-check that:
+1. You copied files from this **CORRECTED** folder, not the original one
+2. Old corrupted files were deleted before copying new ones
+3. All dependencies are installed
+4. File paths exactly match the structure shown above

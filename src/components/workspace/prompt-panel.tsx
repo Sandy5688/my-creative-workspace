@@ -76,7 +76,7 @@ export function PromptPanel({ onComposed }: PromptPanelProps) {
       <Textarea
         placeholder="Describe your composition intent..."
         value={directive}
-        onChange={(e) => setDirective(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDirective(e.target.value)}
         className="min-h-[200px] resize-none mb-4"
         disabled={isLoading}
       />

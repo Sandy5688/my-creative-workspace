@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Block } from '@/types/api';
 import { Grip, Trash2, Image as ImageIcon } from 'lucide-react';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 
 interface EditableBlockProps {
   block: Block;

@@ -1,79 +1,73 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-interface PanelProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-const Panel = React.forwardRef<HTMLDivElement, PanelProps>(
-  ({ className, ...props }, ref) => (
+const Panel = React.forwardRef(function Panel(props: any, ref: any) {
+  const { className, ...rest } = props
+  return (
     <div
       ref={ref}
       className={cn(
         "rounded-lg border bg-card text-card-foreground shadow-sm",
         className
       )}
-      {...props}
+      {...rest}
     />
   )
-)
+})
 Panel.displayName = "Panel"
 
-const PanelHeader = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex flex-col space-y-1.5 p-6", className)}
-    {...props}
-  />
-))
+const PanelHeader = React.forwardRef(function PanelHeader(props: any, ref: any) {
+  const { className, ...rest } = props
+  return (
+    <div
+      ref={ref}
+      className={cn("flex flex-col space-y-1.5 p-6", className)}
+      {...rest}
+    />
+  )
+})
 PanelHeader.displayName = "PanelHeader"
 
-const PanelTitle = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h3
-    ref={ref}
-    className={cn(
-      "text-2xl font-semibold leading-none tracking-tight",
-      className
-    )}
-    {...props}
-  />
-))
+const PanelTitle = React.forwardRef(function PanelTitle(props: any, ref: any) {
+  const { className, ...rest } = props
+  return (
+    <h3
+      ref={ref}
+      className={cn("text-2xl font-semibold leading-none tracking-tight", className)}
+      {...rest}
+    />
+  )
+})
 PanelTitle.displayName = "PanelTitle"
 
-const PanelDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
-  <p
-    ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
-    {...props}
-  />
-))
+const PanelDescription = React.forwardRef(function PanelDescription(props: any, ref: any) {
+  const { className, ...rest } = props
+  return (
+    <p
+      ref={ref}
+      className={cn("text-sm text-muted-foreground", className)}
+      {...rest}
+    />
+  )
+})
 PanelDescription.displayName = "PanelDescription"
 
-const PanelContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
-))
+const PanelContent = React.forwardRef(function PanelContent(props: any, ref: any) {
+  const { className, ...rest } = props
+  return <div ref={ref} className={cn("p-6 pt-0", className)} {...rest} />
+})
 PanelContent.displayName = "PanelContent"
 
-const PanelFooter = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex items-center p-6 pt-0", className)}
-    {...props}
-  />
-))
+const PanelFooter = React.forwardRef(function PanelFooter(props: any, ref: any) {
+  const { className, ...rest } = props
+  return (
+    <div
+      ref={ref}
+      className={cn("flex items-center p-6 pt-0", className)}
+      {...rest}
+    />
+  )
+})
 PanelFooter.displayName = "PanelFooter"
 
 export { Panel, PanelHeader, PanelFooter, PanelTitle, PanelDescription, PanelContent }

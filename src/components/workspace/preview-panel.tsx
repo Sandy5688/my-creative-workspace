@@ -1,79 +1,55 @@
-import * as React from "react"
-import { cn } from "@/lib/utils"
+"use client"
 
-interface PanelProps extends React.HTMLAttributes<HTMLDivElement> {}
+import React from "react"
+import { Panel } from "@/components/ui/panel"
+import { Draft } from "@/types/schema"
+import { Eye } from "lucide-react"
 
-const Panel = React.forwardRef<HTMLDivElement, PanelProps>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "rounded-lg border bg-card text-card-foreground shadow-sm",
-        className
-      )}
-      {...props}
-    />
+interface PreviewPanelProps {
+  draft: Draft | null
+}
+
+export function PreviewPanel({ draft }: PreviewPanelProps) {
+  return (
+    <Panel className="h-full overflow-auto">
+      <div className="p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Eye className="h-5 w-5" />
+          <h2 className="text-2xl font-bold">Preview</h2>
+        </div>
+        {draft ? (
+          <div className="space-y-4">
+            <div className="border-b pb-4">
+              <h1 className="text-3xl font-bold mb-2">{draft.title}</h1>
+              {draft.metadata?.author && (
+                <p className="text-sm text-muted-foreground">By {draft.metadata.author}</p>
+              )}
+            </div>
+            <div className="prose prose-sm max-w-none dark:prose-invert">
+              <div className="whitespace-pre-wrap leading-relaxed">{draft.content}</div>
+            </div>
+            {draft.metadata?.tags && (
+              <div className="flex flex-wrap gap-2 pt-4 border-t">
+                {draft.metadata.tags.map((tag: string, index: number) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="flex items-center justify-center h-64 text-muted-foreground">
+            <div className="text-center">
+              <Eye className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>No draft to preview. Create one first!</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </Panel>
   )
-)
-Panel.displayName = "Panel"
-
-const PanelHeader = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex flex-col space-y-1.5 p-6", className)}
-    {...props}
-  />
-))
-PanelHeader.displayName = "PanelHeader"
-
-const PanelTitle = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h3
-    ref={ref}
-    className={cn(
-      "text-2xl font-semibold leading-none tracking-tight",
-      className
-    )}
-    {...props}
-  />
-))
-PanelTitle.displayName = "PanelTitle"
-
-const PanelDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
-  <p
-    ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
-    {...props}
-  />
-))
-PanelDescription.displayName = "PanelDescription"
-
-const PanelContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
-))
-PanelContent.displayName = "PanelContent"
-
-const PanelFooter = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex items-center p-6 pt-0", className)}
-    {...props}
-  />
-))
-PanelFooter.displayName = "PanelFooter"
-
-export { Panel, PanelHeader, PanelFooter, PanelTitle, PanelDescription, PanelContent }
+}

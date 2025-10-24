@@ -1,79 +1,45 @@
-import * as React from "react"
-import { cn } from "@/lib/utils"
+"use client"
 
-interface PanelProps extends React.HTMLAttributes<HTMLDivElement> {}
+import React from "react"
+import { Panel } from "@/components/ui/panel"
+import { Draft } from "@/types/schema"
 
-const Panel = React.forwardRef<HTMLDivElement, PanelProps>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "rounded-lg border bg-card text-card-foreground shadow-sm",
-        className
-      )}
-      {...props}
-    />
+interface EditorPanelProps {
+  draft: Draft | null
+}
+
+export function EditorPanel({ draft }: EditorPanelProps) {
+  return (
+    <Panel className="h-full overflow-auto">
+      <div className="p-6">
+        <h2 className="text-2xl font-bold mb-4">Editor</h2>
+        {draft ? (
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">Title</label>
+              <p className="text-lg font-semibold">{draft.title}</p>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">Content</label>
+              <div className="mt-2 p-4 bg-muted/50 rounded-lg">
+                <p className="whitespace-pre-wrap">{draft.content}</p>
+              </div>
+            </div>
+            {draft.metadata && (
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Metadata</label>
+                <pre className="mt-2 p-4 bg-muted/50 rounded-lg text-xs overflow-auto">
+                  {JSON.stringify(draft.metadata, null, 2)}
+                </pre>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="flex items-center justify-center h-64 text-muted-foreground">
+            <p>No draft selected. Create one to get started!</p>
+          </div>
+        )}
+      </div>
+    </Panel>
   )
-)
-Panel.displayName = "Panel"
-
-const PanelHeader = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex flex-col space-y-1.5 p-6", className)}
-    {...props}
-  />
-))
-PanelHeader.displayName = "PanelHeader"
-
-const PanelTitle = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h3
-    ref={ref}
-    className={cn(
-      "text-2xl font-semibold leading-none tracking-tight",
-      className
-    )}
-    {...props}
-  />
-))
-PanelTitle.displayName = "PanelTitle"
-
-const PanelDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
-  <p
-    ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
-    {...props}
-  />
-))
-PanelDescription.displayName = "PanelDescription"
-
-const PanelContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
-))
-PanelContent.displayName = "PanelContent"
-
-const PanelFooter = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex items-center p-6 pt-0", className)}
-    {...props}
-  />
-))
-PanelFooter.displayName = "PanelFooter"
-
-export { Panel, PanelHeader, PanelFooter, PanelTitle, PanelDescription, PanelContent }
+}
