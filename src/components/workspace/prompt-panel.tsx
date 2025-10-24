@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Panel } from "@/components/ui/panel";
+import { Panel, PanelHeader, PanelTitle, PanelContent } from "@/components/ui/panel";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useCompose } from "@/hooks/useCompose";
 import { Draft } from "@/types/schema";
-import { Mic, Sparkles, Lock } from "lucide-react";
+import { Mic, Sparkles, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   Select,
@@ -34,73 +34,95 @@ export function PromptPanel({ onComposed }: PromptPanelProps) {
       if (result.success && result.previewData) {
         onComposed(result.previewData);
         toast({
-          title: "Composition created",
-          description: "Your composition has been generated successfully.",
+          title: "✨ Composition Created",
+          description: "Your composition is ready to view!",
         });
         setDirective("");
       }
     } catch (error) {
       toast({
-        title: "Composition failed",
-        description: "Unable to create composition. Please try again.",
+        title: "⚠️ Failed",
+        description: "Unable to create composition.",
         variant: "destructive",
       });
     }
   };
 
   return (
-    <Panel className="h-full flex flex-col p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Sparkles className="h-5 w-5 text-primary" />
-        <h2 className="text-lg font-semibold">Composition Directive</h2>
-      </div>
-
-      <div className="mb-4">
-        <label className="text-xs font-medium text-muted-foreground mb-2 block">
-          TIER
-        </label>
-        <Select value={tier} onValueChange={(v: any) => setTier(v)}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="free">FREE</SelectItem>
-            <SelectItem value="basic">BASIC</SelectItem>
-            <SelectItem value="pro">PRO</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <Textarea
-        placeholder="Describe your composition intent..."
-        value={directive}
-        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDirective(e.target.value)}
-        className="min-h-[200px] resize-none mb-4"
-        disabled={isLoading}
-      />
-
-      <div className="flex gap-2 mb-6">
-        <Button
-          onClick={handleCompose}
-          disabled={isLoading || !directive.trim()}
-          className="flex-1"
-        >
-          {isLoading ? "Composing..." : "Compose"}
-        </Button>
-        <Button variant="outline" size="icon" disabled className="relative">
-          <Mic className="h-4 w-4" />
-          <Lock className="h-3 w-3 absolute -top-1 -right-1 text-accent" />
-        </Button>
-      </div>
-
-      <div className="flex-1 overflow-y-auto">
-        <h3 className="text-xs font-medium text-muted-foreground mb-3">
-          RECENT DIRECTIVES
-        </h3>
-        <div className="space-y-2 text-sm text-muted-foreground">
-          <p className="opacity-50">No recent directives</p>
+    <Panel>
+      <PanelHeader>
+        <div className="flex items-center gap-2">
+          <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600">
+            <Sparkles className="h-4 w-4 text-white" />
+          </div>
+          <PanelTitle>Directive Input</PanelTitle>
         </div>
-      </div>
+      </PanelHeader>
+
+      <PanelContent>
+        <div className="space-y-4">
+          <div>
+            <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 block">
+              Composition Tier
+            </label>
+            <Select value={tier} onValueChange={(v: any) => setTier(v)}>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="free">🆓 Free</SelectItem>
+                <SelectItem value="basic">⚡ Basic</SelectItem>
+                <SelectItem value="pro">💎 Pro</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 block">
+              Your Directive
+            </label>
+            <Textarea
+              placeholder="Describe what you want to create..."
+              value={directive}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDirective(e.target.value)}
+              className="min-h-[300px] resize-none text-base"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="flex gap-2">
+            <Button
+              onClick={handleCompose}
+              disabled={isLoading || !directive.trim()}
+              className="flex-1 h-12 text-base font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            >
+              {isLoading ? (
+                <>
+                  <Zap className="h-4 w-4 mr-2 animate-pulse" />
+                  Composing...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Compose
+                </>
+              )}
+            </Button>
+            <Button variant="outline" size="icon" disabled className="h-12 w-12">
+              <Mic className="h-5 w-5" />
+            </Button>
+          </div>
+
+          <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+            <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-3">
+              Recent Directives
+            </p>
+            <div className="text-sm text-slate-500 dark:text-slate-400 text-center py-8">
+              No recent directives yet
+            </div>
+          </div>
+        </div>
+      </PanelContent>
     </Panel>
   );
 }

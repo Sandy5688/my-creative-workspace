@@ -1,45 +1,64 @@
-"use client"
+"use client";
 
-import React from "react"
-import { Panel } from "@/components/ui/panel"
-import { Draft } from "@/types/schema"
+import { Panel, PanelHeader, PanelTitle, PanelContent } from "@/components/ui/panel";
+import { Draft } from "@/types/schema";
+import { Code2, FileText } from "lucide-react";
 
 interface EditorPanelProps {
-  draft: Draft | null
+  draft: Draft | null;
 }
 
 export function EditorPanel({ draft }: EditorPanelProps) {
   return (
-    <Panel className="h-full overflow-auto">
-      <div className="p-6">
-        <h2 className="text-2xl font-bold mb-4">Editor</h2>
+    <Panel>
+      <PanelHeader>
+        <div className="flex items-center gap-2">
+          <div className="p-2 rounded-lg bg-gradient-to-br from-orange-500 to-red-600">
+            <Code2 className="h-4 w-4 text-white" />
+          </div>
+          <PanelTitle>Properties</PanelTitle>
+        </div>
+      </PanelHeader>
+
+      <PanelContent>
         {draft ? (
           <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">Title</label>
-              <p className="text-lg font-semibold">{draft.title}</p>
+            <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+              <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
+                Title
+              </p>
+              <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{draft.title}</p>
             </div>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">Content</label>
-              <div className="mt-2 p-4 bg-muted/50 rounded-lg">
-                <p className="whitespace-pre-wrap">{draft.content}</p>
-              </div>
+
+            <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+              <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
+                Content Length
+              </p>
+              <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                {draft.content.length} characters
+              </p>
             </div>
+
             {draft.metadata && (
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Metadata</label>
-                <pre className="mt-2 p-4 bg-muted/50 rounded-lg text-xs overflow-auto">
+              <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
+                  Metadata
+                </p>
+                <pre className="text-xs text-slate-700 dark:text-slate-300 overflow-auto">
                   {JSON.stringify(draft.metadata, null, 2)}
                 </pre>
               </div>
             )}
           </div>
         ) : (
-          <div className="flex items-center justify-center h-64 text-muted-foreground">
-            <p>No draft selected. Create one to get started!</p>
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <FileText className="h-10 w-10 text-slate-300 dark:text-slate-600 mb-3" />
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              No composition selected
+            </p>
           </div>
         )}
-      </div>
+      </PanelContent>
     </Panel>
-  )
+  );
 }

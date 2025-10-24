@@ -10,7 +10,6 @@ import Footer from "@/components/layout/footer";
 
 export default function Workspace() {
   const [draft, setDraft] = useState<Draft | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(true);
   const [lastSaved, setLastSaved] = useState<string | undefined>(undefined);
 
@@ -24,20 +23,27 @@ export default function Workspace() {
   };
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-screen flex-col bg-slate-50 dark:bg-slate-900">
       <Header />
       
-      <main className="flex flex-1 gap-4 p-4 overflow-hidden bg-gradient-to-br from-background to-muted/20">
-        <div className="w-80 flex-shrink-0 hidden lg:block">
-          <PromptPanel onComposed={handleComposed} />
-        </div>
+      <main className="flex-1 overflow-hidden">
+        <div className="h-full max-w-[1800px] mx-auto p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
+            {/* Left Panel - Prompt */}
+            <div className="lg:col-span-3 h-full overflow-hidden">
+              <PromptPanel onComposed={handleComposed} />
+            </div>
 
-        <div className="flex-1 min-w-0">
-          <PreviewPanel draft={draft} />
-        </div>
+            {/* Center Panel - Preview */}
+            <div className="lg:col-span-6 h-full overflow-hidden">
+              <PreviewPanel draft={draft} />
+            </div>
 
-        <div className="w-80 flex-shrink-0 hidden lg:block">
-          <EditorPanel draft={draft} />
+            {/* Right Panel - Editor */}
+            <div className="lg:col-span-3 h-full overflow-hidden">
+              <EditorPanel draft={draft} />
+            </div>
+          </div>
         </div>
       </main>
 

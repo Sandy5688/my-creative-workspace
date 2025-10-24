@@ -1,39 +1,48 @@
-"use client"
+"use client";
 
-import React from "react"
-import { Panel } from "@/components/ui/panel"
-import { Draft } from "@/types/schema"
-import { Eye } from "lucide-react"
+import { Panel, PanelHeader, PanelTitle, PanelContent } from "@/components/ui/panel";
+import { Draft } from "@/types/schema";
+import { Eye, Sparkles } from "lucide-react";
 
 interface PreviewPanelProps {
-  draft: Draft | null
+  draft: Draft | null;
 }
 
 export function PreviewPanel({ draft }: PreviewPanelProps) {
   return (
-    <Panel className="h-full overflow-auto">
-      <div className="p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Eye className="h-5 w-5" />
-          <h2 className="text-2xl font-bold">Preview</h2>
+    <Panel>
+      <PanelHeader>
+        <div className="flex items-center gap-2">
+          <div className="p-2 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600">
+            <Eye className="h-4 w-4 text-white" />
+          </div>
+          <PanelTitle>Live Preview</PanelTitle>
         </div>
+      </PanelHeader>
+
+      <PanelContent>
         {draft ? (
-          <div className="space-y-4">
-            <div className="border-b pb-4">
-              <h1 className="text-3xl font-bold mb-2">{draft.title}</h1>
+          <div className="space-y-6">
+            <div className="p-6 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-slate-700">
+              <h1 className="text-3xl font-bold mb-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                {draft.title}
+              </h1>
               {draft.metadata?.author && (
-                <p className="text-sm text-muted-foreground">By {draft.metadata.author}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                  by {draft.metadata.author}
+                </p>
               )}
+              <div className="prose prose-slate dark:prose-invert max-w-none">
+                <p className="text-lg leading-relaxed">{draft.content}</p>
+              </div>
             </div>
-            <div className="prose prose-sm max-w-none dark:prose-invert">
-              <div className="whitespace-pre-wrap leading-relaxed">{draft.content}</div>
-            </div>
+
             {draft.metadata?.tags && (
-              <div className="flex flex-wrap gap-2 pt-4 border-t">
-                {draft.metadata.tags.map((tag: string, index: number) => (
+              <div className="flex flex-wrap gap-2">
+                {draft.metadata.tags.map((tag: string, i: number) => (
                   <span
-                    key={index}
-                    className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium"
+                    key={i}
+                    className="px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium"
                   >
                     {tag}
                   </span>
@@ -42,14 +51,19 @@ export function PreviewPanel({ draft }: PreviewPanelProps) {
             )}
           </div>
         ) : (
-          <div className="flex items-center justify-center h-64 text-muted-foreground">
-            <div className="text-center">
-              <Eye className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No draft to preview. Create one first!</p>
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <div className="p-6 rounded-full bg-slate-100 dark:bg-slate-800 mb-6">
+              <Sparkles className="h-12 w-12 text-slate-400" />
             </div>
+            <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              No Preview Yet
+            </h3>
+            <p className="text-slate-500 dark:text-slate-400 max-w-sm">
+              Enter a directive and click Compose to see your creation come to life
+            </p>
           </div>
         )}
-      </div>
+      </PanelContent>
     </Panel>
-  )
+  );
 }

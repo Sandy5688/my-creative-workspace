@@ -2,16 +2,18 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 const Panel = React.forwardRef(function Panel(props: any, ref: any) {
-  const { className, ...rest } = props
+  const { className, children, ...rest } = props
   return (
     <div
       ref={ref}
       className={cn(
-        "rounded-lg border bg-card text-card-foreground shadow-sm",
+        "rounded-2xl bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 h-full overflow-hidden flex flex-col backdrop-blur-sm",
         className
       )}
       {...rest}
-    />
+    >
+      {children}
+    </div>
   )
 })
 Panel.displayName = "Panel"
@@ -21,7 +23,7 @@ const PanelHeader = React.forwardRef(function PanelHeader(props: any, ref: any) 
   return (
     <div
       ref={ref}
-      className={cn("flex flex-col space-y-1.5 p-6", className)}
+      className={cn("border-b border-slate-200 dark:border-slate-700 px-6 py-4 bg-slate-50 dark:bg-slate-800/50", className)}
       {...rest}
     />
   )
@@ -33,41 +35,17 @@ const PanelTitle = React.forwardRef(function PanelTitle(props: any, ref: any) {
   return (
     <h3
       ref={ref}
-      className={cn("text-2xl font-semibold leading-none tracking-tight", className)}
+      className={cn("text-lg font-semibold text-slate-900 dark:text-slate-100", className)}
       {...rest}
     />
   )
 })
 PanelTitle.displayName = "PanelTitle"
 
-const PanelDescription = React.forwardRef(function PanelDescription(props: any, ref: any) {
-  const { className, ...rest } = props
-  return (
-    <p
-      ref={ref}
-      className={cn("text-sm text-muted-foreground", className)}
-      {...rest}
-    />
-  )
-})
-PanelDescription.displayName = "PanelDescription"
-
 const PanelContent = React.forwardRef(function PanelContent(props: any, ref: any) {
   const { className, ...rest } = props
-  return <div ref={ref} className={cn("p-6 pt-0", className)} {...rest} />
+  return <div ref={ref} className={cn("p-6 overflow-auto flex-1", className)} {...rest} />
 })
 PanelContent.displayName = "PanelContent"
 
-const PanelFooter = React.forwardRef(function PanelFooter(props: any, ref: any) {
-  const { className, ...rest } = props
-  return (
-    <div
-      ref={ref}
-      className={cn("flex items-center p-6 pt-0", className)}
-      {...rest}
-    />
-  )
-})
-PanelFooter.displayName = "PanelFooter"
-
-export { Panel, PanelHeader, PanelFooter, PanelTitle, PanelDescription, PanelContent }
+export { Panel, PanelHeader, PanelTitle, PanelContent }
